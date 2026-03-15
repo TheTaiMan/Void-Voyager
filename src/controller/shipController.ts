@@ -13,9 +13,6 @@ export default class ShipController {
 
     constructor() {
         this.#ship = new Ship()
-        
-        // The view needs a reference to the model (for reading data) 
-        // and this controller (for sending commands)
         this.#shipView = new ShipView(this.#ship, this)
     }
     

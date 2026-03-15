@@ -33,7 +33,8 @@ export default class ShipView implements Listener {
         // Render initial state
         shipContainer.innerHTML = 
            `<h1 id="distance">${this.#ship.distanceTraveled}</h1>
-            <p id="speed">Distance per click: ${this.#ship.currentSpeed}</p>
+            <p id="thrust">Distance per click: ${this.#ship.thrustPower}</p>
+            <p id="speed">Speed: ${this.#ship.thrustsPerSecond}</p>
             <button id="engage">Engage Thrusters</button>`
 
         app.appendChild(shipContainer);
@@ -52,7 +53,11 @@ export default class ShipView implements Listener {
         document.querySelector("#distance")!
             .innerHTML = `${this.#ship.distanceTraveled}`
 
+        document.querySelector("#thrust")!
+            .innerHTML = `Distance per click: ${this.#ship.thrustPower}`
+
+        const speed = this.#ship.thrustPower * this.#ship.thrustsPerSecond
         document.querySelector("#speed")!
-            .innerHTML = `Distance per click: ${this.#ship.currentSpeed}`
+            .innerHTML = `Speed: ${speed}`
     }
 }

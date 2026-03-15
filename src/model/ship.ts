@@ -4,21 +4,25 @@
  */
 
 import assert from "../util/assertions"
+import Autopilot from "./autopilot"
 
 import type Listener from "./listener"
 import type PropulsionSystem from "./propulsionSystem"
 
 export default class Ship {
     #distanceTraveled: number
-    #currentSpeed: number
+    #thrustPower: number
     #installedUpgrades: Array<PropulsionSystem>
-
+    #thrustsPerSecond: number
+    #activeAutopilots: Array<Autopilot>
     #listeners: Array<Listener>
 
     constructor() {
         this.#distanceTraveled = 0
-        this.#currentSpeed = 1
+        this.#thrustPower = 1
         this.#installedUpgrades = new Array<PropulsionSystem>()
+        this.#thrustsPerSecond = 0
+        this.#activeAutopilots = new Array<Autopilot>()
 
         this.#listeners = new Array<Listener>()
         this.#checkInvairant()
@@ -32,35 +36,26 @@ export default class Ship {
         this.#distanceTraveled = amount
     }
 
-    get currentSpeed() {
-        return this.#currentSpeed
+    get thrustPower() {
+        return this.#thrustPower
     }
 
-    get flightLog() {
-        return this.#installedUpgrades
+    get thrustsPerSecond() {
+        return this.#thrustsPerSecond
     }
 
 
     #checkInvairant() {
         assert(this.distanceTraveled >= 0,
                "Distance traveled must be greater than or equal to zero.")
-        assert(this.currentSpeed > 0,
-               "Current speed must be greater than zero.")
-    }
-
-    #updateSpeed() {
-        // Updates how much each click is worth
-        this.#currentSpeed = 1
-        this.#installedUpgrades.forEach(e => {
-            this.#currentSpeed += e.boost()
-        })
-
-        // Checks whether currentSpeed is proper
-        this.#checkInvairant()
+        assert(this.thrustPower > 0,
+               "Thrust power must be greater than zero.")
+        assert(this.thrustsPerSecond >= 0,
+               "Thrust per second must greater than or equal to zero.")
     }
 
     engageThrusters() {
-        this.#distanceTraveled += this.currentSpeed
+        this.#distanceTraveled += this.thrustPower
         // Checks whether distanceTraveled is proper
         this.#checkInvairant()
         this.#notifyAll()
@@ -77,10 +72,41 @@ export default class Ship {
         return true
     }
 
+    #updateThrustPower() {
+        // Updates how much each click is worth
+        this.#thrustPower = 1
+        this.#installedUpgrades.forEach(e => {
+            this.#thrustPower += e.boost()
+        })
+
+        // Checks whether thrustPower is proper
+        this.#checkInvairant()
+    }
+
     installUpgrade(upgrade: PropulsionSystem) {
         if (this.#deductDistanceTravelled(upgrade.cost())) {
             this.#installedUpgrades.push(upgrade)
-            this.#updateSpeed()
+            this.#updateThrustPower()
+            this.#notifyAll()
+        } else {
+            throw new InsufficientDistanceException();
+        }
+    }
+
+    #updateThrustsPerSecond() {
+        this.#thrustsPerSecond = 0
+        this.#activeAutopilots.forEach( (e) => {
+            this.#thrustsPerSecond += e.passiveVelocity()
+        })
+
+        // Checks whether thrustPower is proper
+        this.#checkInvairant()
+    }
+
+    installAutopilot(autopilot: Autopilot) {
+        if (this.#deductDistanceTravelled(autopilot.cost())) {
+            this.#activeAutopilots.push(autopilot)
+            this.#updateThrustsPerSecond()
             this.#notifyAll()
         } else {
             throw new InsufficientDistanceException();
@@ -96,7 +122,6 @@ export default class Ship {
     registerListener(listner: Listener) {
         this.#listeners.push(listner)
     }
-
 }
 
 export class InsufficientDistanceException extends Error { }
