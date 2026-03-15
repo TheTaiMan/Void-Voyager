@@ -54,7 +54,6 @@ export default class Ship {
                "Thrust per second must greater than or equal to zero.")
     }
 
-    
     engageThrusters() {
         this.#distanceTraveled += this.thrustPower
         // Checks whether distanceTraveled is proper
