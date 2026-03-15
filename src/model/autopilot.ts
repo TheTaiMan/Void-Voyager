@@ -13,7 +13,7 @@ export default class Autopilot {
         this.#checkInvariant()
     }
 
-    modelName(): string {
+    name(): string {
         return this.#name
     }
 
@@ -31,12 +31,12 @@ export default class Autopilot {
         let results = await db()
         .query<{
             name: string,
-            passiveVelocity: number,
+            passive_velocity: number,
             cost: number
-        }>("select * from autopilot");
+        }>("select * from autopilot_inventory");
 
         results.rows.forEach(row => {
-            let autopilot = new Autopilot(row.name, row.passiveVelocity, row.cost);
+            let autopilot = new Autopilot(row.name, row.passive_velocity, row.cost);
             allAutopilots.push(autopilot);
         });
 
@@ -47,16 +47,16 @@ export default class Autopilot {
         let results = await db()
         .query<{
             name: string,
-            passiveVelocity: number,
+            passive_velocity: number,
             cost: number
-        }>("select * from autopilot where name = $1", [name]);
+        }>("select * from autopilot_inventory where name = $1", [name]);
 
         if (results.rows.length === 0) {
             return null; 
         }
 
         const row = results.rows[0]
-        const autopilot = new Autopilot(row.name, row.passiveVelocity, row.cost);
+        const autopilot = new Autopilot(row.name, row.passive_velocity, row.cost);
 
         return autopilot 
     }

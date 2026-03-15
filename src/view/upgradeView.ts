@@ -1,46 +1,38 @@
-/**
- * Displays available upgrades and handles click events to purchase them.
- */
-
 import type UpgradeController from "../controller/upgradeController"
-import type Hyperdrive from "../model/hyperdrive"
-import type JumpDrive from "../model/jumpDrive"
+import type PropulsionSystem from "../model/propulsionSystem";
 
 export default class UpgradeView {
     #upgradeController: UpgradeController
 
-    constructor(upgradeController: UpgradeController, jumpDrive: JumpDrive, hyperdrive: Hyperdrive) {
+    constructor(upgradeController: UpgradeController, inventoryPromise: Promise<Array<PropulsionSystem>>) {
         this.#upgradeController = upgradeController
-        this.#renderButtons(jumpDrive, hyperdrive) // Hardcoded for now
+
+        inventoryPromise.then((propulsion) => {
+            this.#renderButtons(propulsion)
+        })
     }
 
     /**
      * Creates and appends the upgrade buttons to the DOM.
      * (Currently hardcoded for specific upgrade types)
      */
-    #renderButtons(jumpDrive: JumpDrive, hyperdrive: Hyperdrive) {
+    #renderButtons(propulsions: Array<PropulsionSystem>) {
         const app = document.querySelector("#app")!;
         const upgradeEle = document.createElement("div")
         upgradeEle.id = "upgrades"
-        
         app.appendChild(upgradeEle);
         
-        // 1. Create Jump Drive Button
-        const jumpDriveEle = document.createElement("button")
-        jumpDriveEle.innerText = `${jumpDrive.modelName()} (+${jumpDrive.boost()})`
-        jumpDriveEle.id = "jumpdrive-btn"
-        jumpDriveEle.addEventListener("click", 
-                     () => this.#upgradeController.handleJumpdriveClick())
+        // You would likely get a reference to an HTML div container here
+        // const container = document.getElementById("shop-container");
 
-        upgradeEle.append(jumpDriveEle)
+        propulsions.forEach(propulsion => {
+            const button = document.createElement("button");
+            button.innerText = "Buy " + propulsion.name() + " (Cost: " + propulsion.cost() + ")";
+            button.addEventListener("click", () => {
+                this.#upgradeController.handleClick(propulsion.name());
+            });
 
-        // 2. Create Hyperdrive Button
-        const hyperdriveEle = document.createElement("button")
-        hyperdriveEle.innerText = `${hyperdrive.modelName()} (+${hyperdrive.boost()})`
-        hyperdriveEle.id = "hyperdrive-btn"
-        hyperdriveEle.addEventListener("click",
-                      () => this.#upgradeController.handleHyperdriveClick())
-
-        upgradeEle.append(hyperdriveEle)
+            upgradeEle.appendChild(button);
+        });
     }
 }
