@@ -8,17 +8,17 @@ export default class UpgradeController {
 
     constructor(shipController: ShipController) {
         // Instantiate sample upgrades so the view can display their stats/names
-        this.#shipController = shipController 
+        this.#shipController = shipController
         this.#upgradeView = new UpgradeView(this, PropulsionSystem.getPropulsionInventory())
     }
 
 
-    handleClick(name: string) {
-        PropulsionSystem.getPropulsion(name).then((propulsion)=> {
-            if (propulsion !== null) {
-                this.#shipController.installUpgrade(propulsion)
-            }
-        })
+    async handleClick(name: string) {
+        const propulsion = await PropulsionSystem.getPropulsion(name);
+
+        if (propulsion !== null) {
+            this.#shipController.installUpgrade(propulsion);
+        }
     }
 
 }

@@ -15,7 +15,7 @@ export default class BuildingView {
     #renderButtons(autopilots: Array<Autopilot>) {
         const app = document.querySelector("#app")!;
         const buildingEle = document.createElement("div")
-        buildingEle.id = "upgrades"
+        buildingEle.id = "buildings"
         app.appendChild(buildingEle);
         
         // You would likely get a reference to an HTML div container here
@@ -23,7 +23,8 @@ export default class BuildingView {
 
         autopilots.forEach(autopilot => {
             const button = document.createElement("button");
-            button.innerText = "Buy " + autopilot.name() + " (Cost: " + autopilot.cost() + ")";
+            button.innerText = `${autopilot.name()} [x${autopilot.passiveVelocity()}] (Cost: ${autopilot.cost()})`;
+
             button.addEventListener("click", () => {
                 this.#buildingController.handleClick(autopilot.name());
             });

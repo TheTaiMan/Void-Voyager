@@ -21,11 +21,15 @@ export default class Ship {
         this.#installedUpgrades = new Array<PropulsionSystem>()
 
         this.#listeners = new Array<Listener>()
-        this.#checkShip()
+        this.#checkInvairant()
     }
 
     get distanceTraveled() {
         return this.#distanceTraveled
+    }
+
+    set distanceTraveled(amount: number) {
+        this.#distanceTraveled = amount
     }
 
     get currentSpeed() {
@@ -36,7 +40,8 @@ export default class Ship {
         return this.#installedUpgrades
     }
 
-    #checkShip() {
+
+    #checkInvairant() {
         assert(this.distanceTraveled >= 0,
                "Distance traveled must be greater than or equal to zero.")
         assert(this.currentSpeed > 0,
@@ -51,21 +56,35 @@ export default class Ship {
         })
 
         // Checks whether currentSpeed is proper
-        this.#checkShip()
+        this.#checkInvairant()
     }
 
     engageThrusters() {
         this.#distanceTraveled += this.currentSpeed
         // Checks whether distanceTraveled is proper
-        this.#checkShip()
+        this.#checkInvairant()
         this.#notifyAll()
     }
 
-    installUpgrade(upgrade: PropulsionSystem) {
-        this.#installedUpgrades.push(upgrade)
-        this.#updateSpeed()
+    #deductDistanceTravelled(amount: number) : boolean {
+        const newDistance = this.distanceTraveled - amount
+        if (newDistance < 0) {
+            return false
+        }
 
-        this.#notifyAll()
+        this.distanceTraveled = newDistance
+        this.#checkInvairant()
+        return true
+    }
+
+    installUpgrade(upgrade: PropulsionSystem) {
+        if (this.#deductDistanceTravelled(upgrade.cost())) {
+            this.#installedUpgrades.push(upgrade)
+            this.#updateSpeed()
+            this.#notifyAll()
+        } else {
+            throw new InsufficientDistanceException();
+        }
     }
 
     #notifyAll() {
@@ -79,3 +98,5 @@ export default class Ship {
     }
 
 }
+
+export class InsufficientDistanceException extends Error { }
