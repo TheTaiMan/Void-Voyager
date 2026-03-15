@@ -53,103 +53,40 @@ classDiagram
 
     note for Ship "Invariants:
     * distanceTraveled >= 0
-    * currentSpeed > 0
-    * pilotName is not empty
-    * password is not empty"
+    * currentSpeed > 0"
 
     class PropulsionSystem {
-        <<interface>>
-        +modelName() string
-        +boost() number
-        +cost() number
+        -string name
+        -number boost
+        -number cost
+
+        %% No natural key exists, so a synthetic id is required
+        -~number id
+        %% ship is a DB only
+        -Ship ship_id
     }
 
     note for PropulsionSystem "Invariants:
     * boost > 0
     * cost > 0"
 
-    class JumpDrive {
-        -string name
-        -number boost
-        -number cost
-
-        %% ship is a DB only
-        -Ship ship
-        %% No natural key exists, so a synthetic id is required
-        -~number id
-    }
-
-    note for JumpDrive "Invariants:
-    * boost > 0
-    * cost > 0"
-
-    class Hyperdrive {
-        -string name
-        -number boost
-        -number cost
-
-        %% ship is a DB only
-        -Ship ship
-        %% No natural key exists, so a synthetic id is required
-        -~number id
-    }
-
-    note for Hyperdrive "Invariants:
-    * boost > 0
-    * cost > 0"
-
     class Autopilot {
-        <<interface>>
-        +modelName() string
+        -string name
         %% Clicks Per Second
-        +passiveVelocity() number
-        +cost() number
+        -number passiveVelocity
+        -number cost
+
+        %% No natural key exists, so a synthetic id is required
+        -~number id
+        %% ship is a DB only
+        -Ship ship_id
     }
 
     note for Autopilot "Invariants:
     * passiveVelocity > 0
     * cost > 0"
 
-    class NavComputer {
-        -string name
-        %% Clicks Per Second
-        -number passiveVelocity 
-        -number cost
-
-        %% No natural key exists, so a synthetic id is required
-        -~number id
-        %% ship is a DB only
-        -Ship ship
-    }
-
-    note for NavComputer "Invariants:
-    * passiveVelocity > 0
-    * cost > 0"
-
-    class AI_Captain {
-        -string name
-        %% Clicks Per Second
-        -number passiveVelocity
-        -number cost
-
-        %% ship is a DB only
-        -~number id
-        %% No natural key exists, so a synthetic id is required
-        -Ship ship
-    }
-
-
-    note for AI_Captain "Invariants:
-    * passiveVelocity > 0
-    * cost > 0"
-
     Ship "1" o--* "*" PropulsionSystem
     Ship "1" o--* "*" Autopilot
-
-    JumpDrive ..|> PropulsionSystem
-    Hyperdrive ..|> PropulsionSystem
-
-    NavComputer ..|> Autopilot
-    AI_Captain ..|> Autopilot
 ```
 
