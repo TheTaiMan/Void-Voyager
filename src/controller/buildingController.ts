@@ -12,11 +12,11 @@ export default class BuildingController {
         this.#buildingView = new BuildingView(this, Autopilot.getAutopilotsInventory())
     }
 
-    // This method is triggered by the View when a dynamically generated button is clicked
-    handleClick(name: string) {
-        console.log("The user clicked the button to buy: " + name);
-        
-        // Here you will eventually query Autopilot.getAutopilot(name)
-        // verify the player has enough currency, and deduct the cost
+    async handleClick(name: string) {
+        const autopilot= await Autopilot.getAutopilot(name);
+
+        if (autopilot !== null) {
+            this.#shipController.installAutopilot(autopilot);
+        }
     }
 }

@@ -54,11 +54,23 @@ export default class Ship {
                "Thrust per second must greater than or equal to zero.")
     }
 
+    
     engageThrusters() {
         this.#distanceTraveled += this.thrustPower
         // Checks whether distanceTraveled is proper
         this.#checkInvairant()
         this.#notifyAll()
+    }
+
+    applyPassiveThrust() {
+        const passiveDistance = this.thrustPower * this.thrustsPerSecond;
+
+        // Only update and notify if there is actual movement
+        if (passiveDistance > 0) {
+            this.distanceTraveled += passiveDistance;
+            this.#checkInvairant();
+            this.#notifyAll();
+        }
     }
 
     #deductDistanceTravelled(amount: number) : boolean {
