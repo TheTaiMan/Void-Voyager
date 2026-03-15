@@ -2,38 +2,64 @@
 -- author: Miah Tayen (tayenm@myumanitoba.ca)
 -- date: Winter 2026
 
--- Ship Table
-CREATE TABLE IF NOT EXISTS ship(
-    pilotName VARCHAR(255) NOT NULL UNIQUE,
+-- Ship (Account) Table
+CREATE TABLE IF NOT EXISTS ship (
+    pilot_name VARCHAR(255) PRIMARY KEY, -- Same as NOT NULL UNIQUE
     password VARCHAR(255) NOT NULL,
-    distanceTraveled int NOT NULL,
-    currentSpeed int NOT NULL 
+    distance_traveled INT NOT NULL,
+    current_speed INT NOT NULL
 );
 
--- PropulsionSystem Table (Flattened hierarchy)
-CREATE TABLE IF NOT EXISTS propulsionSystem(
-    id SERIAL NOT NULL UNIQUE,
-    classType VARCHAR(255) NOT NULL,
-
+-- Instance Tables
+CREATE TABLE IF NOT EXISTS propulsion_system (
+    id SERIAL PRIMARY KEY, -- Same as NOT NULL UNIQUE
     name VARCHAR(255) NOT NULL,
-    boost int NOT NULL,
-    cost int NOT NULL,
+    boost INT NOT NULL,
+    cost INT NOT NULL,
 
-    ship VARCHAR(255) NOT NULL,
-    FOREIGN KEY (ship) references ship(pilotName)
+    ship_id VARCHAR(255),
+    FOREIGN KEY (ship_id) REFERENCES ship(pilot_name)
+        ON DELETE CASCADE
+        
+);
+
+CREATE TABLE IF NOT EXISTS autopilot (
+    id SERIAL PRIMARY KEY, -- Same as NOT NULL UNIQUE
+    name VARCHAR(255) NOT NULL,
+    passive_velocity INT NOT NULL,
+    cost INT NOT NULL,
+
+    ship_id VARCHAR(255),
+    FOREIGN KEY (ship_id) REFERENCES ship(pilot_name)
         ON DELETE CASCADE
 );
 
--- Autopilot Table (Flattened hierarchy)
-CREATE TABLE IF NOT EXISTS autopilot(
-    id SERIAL NOT NULL UNIQUE,
-    classType VARCHAR(255) NOT NULL,
-
-    name VARCHAR(255) NOT NULL,
-    passiveVelocity int NOT NULL,
-    cost int NOT NULL,
-
-    ship VARCHAR(255) NOT NULL,
-    FOREIGN KEY (ship) references ship(pilotName)
-        ON DELETE CASCADE
+-- Inventory Tables
+CREATE TABLE IF NOT EXISTS propulsion_inventory (
+    name VARCHAR(255) PRIMARY KEY,
+    boost INT NOT NULL,
+    cost INT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS autopilot_inventory (
+    name VARCHAR(255) PRIMARY KEY,
+    passive_velocity INT NOT NULL,
+    cost INT NOT NULL
+);
+
+INSERT INTO propulsion_inventory (name, boost, cost)
+    VALUES ('Jump Drive', 10, 50)
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO propulsion_inventory (name, boost, cost)
+    VALUES ('Hyperdrive', 50, 500)
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO autopilot_inventory (name, passive_velocity, cost) 
+    VALUES ('NavComputer', 5, 100) 
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO autopilot_inventory (name, passive_velocity, cost) 
+    VALUES ('AI Captain', 25, 1000) 
+    ON CONFLICT (name) DO NOTHING;
+
