@@ -30,11 +30,12 @@ export default class ShipView implements Listener {
         const shipContainer = document.createElement("div");
         shipContainer.id = "ship";
         
-        // Render initial state
+        const initialSpeed = this.#ship.thrustPower * this.#ship.thrustsPerSecond;
+        
         shipContainer.innerHTML = 
            `<h1 id="distance">${this.#ship.distanceTraveled}</h1>
             <p id="thrust">Distance per click: ${this.#ship.thrustPower}</p>
-            <p id="speed">Speed: ${this.#ship.thrustsPerSecond}</p>
+            <p id="speed">Speed: ${initialSpeed}</p>
             <button id="engage">Engage Thrusters</button>`
 
         app.appendChild(shipContainer);

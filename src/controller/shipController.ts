@@ -1,18 +1,40 @@
-import type Autopilot from "../model/autopilot";
-import type Propulsion from "../model/propulsion"
+import Autopilot from "../model/autopilot";
+import Propulsion from "../model/propulsion"
 import Ship from "../model/ship";
 import ShipView from "../view/shipView";
 
 export default class ShipController {
-    #ship: Ship
-    #shipView: ShipView
-    #automationId: number
+    #ship!: Ship;
+    #shipView!: ShipView;
+    #automationId!: number;
 
-    constructor() {
-        this.#ship = new Ship()
-        this.#shipView = new ShipView(this.#ship, this)
+    #pilotName: string;
+    #password: string;
+    #distanceTravelled: number;
 
-        this.#automationId = this.#engageAutopilots()
+    constructor(pilotName: string, password: string, distanceTravelled: number) {
+        this.#pilotName = pilotName;
+        this.#password = password;
+        this.#distanceTravelled = distanceTravelled;
+    }
+
+    async initialize() {
+
+        const [installedUpgrades, activeAutopilots] = await Promise.all([
+            Propulsion.installedPropulsions(this.#pilotName),
+            Autopilot.activeAutopilots(this.#pilotName)
+        ]);
+
+        this.#ship = new Ship(
+            this.#pilotName, 
+            this.#password, 
+            this.#distanceTravelled, 
+            installedUpgrades, 
+            activeAutopilots
+        );
+        
+        this.#shipView = new ShipView(this.#ship, this);
+        this.#automationId = this.#engageAutopilots();
     }
 
     engageThrusters() {
@@ -28,7 +50,6 @@ export default class ShipController {
     }
 
     #engageAutopilots() {
-        Ship.save(this.#ship) // ONLY to do for now
         return setInterval(() => {
             this.#ship.applyPassiveThrust();
         }, 1000);

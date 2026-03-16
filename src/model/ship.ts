@@ -20,16 +20,24 @@ export default class Ship {
     #activeAutopilots: Array<Autopilot>
     #listeners: Array<Listener>
 
-    constructor() {
-        this.#pilotName = "jeff"  // Set
-        this.#password =  "ffej" // Set
-        this.#distanceTraveled = 0 // Set
+    constructor(
+        pilotName: string,
+        password: string,
+        distanceTraveled: number,
+        installedUpgrades: Array<Propulsion>,
+        activeAutopilots: Array<Autopilot>
+    ) {
+        this.#pilotName = pilotName 
+        this.#password =  password 
+        this.#distanceTraveled = distanceTraveled
+        this.#installedUpgrades = installedUpgrades
         this.#thrustPower = 1
-        this.#installedUpgrades = new Array<Propulsion>() // Set
         this.#thrustsPerSecond = 0
-        this.#activeAutopilots = new Array<Autopilot>() // Set
-
+        this.#activeAutopilots = activeAutopilots
         this.#listeners = new Array<Listener>()
+
+        this.#updateThrustPower() 
+        this.#updateThrustsPerSecond() 
         this.#checkInvairant()
     }
 

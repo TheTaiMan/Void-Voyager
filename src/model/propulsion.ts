@@ -2,16 +2,17 @@ import assert from "../util/assertions"
 import db from "./connection"
 
 export default class Propulsion{
-    #id?: number
     readonly #name: string
     #bost: number
     #cost: number
+    #id?: number
 
-    constructor(name: string, bost: number, cost: number) {
+    constructor(name: string, bost: number, cost: number, id: number | undefined = undefined) {
         this.#name = name
         this.#bost = bost
         this.#cost = cost
         this.#checkInvariant()
+        this.#id = id
     }
 
     get id() {
@@ -68,6 +69,29 @@ export default class Propulsion{
         const propulsion = new Propulsion(row.name, row.boost, row.cost);
 
         return propulsion 
+    }
+
+    static async installedPropulsions(pilotName: string) {
+        const propulsions = new Array<Propulsion>()
+
+        let results = await db()
+            .query<{
+                id: number
+                name: string,
+                boost: number,
+                cost: number
+            }>(
+                `SELECT id, name, boost, cost
+                FROM propulsion WHERE ship_id = $1`, 
+                [pilotName]
+            );
+
+        results.rows.forEach( (row) => {
+            let propulsion = new Propulsion(row.name, row.boost, row.cost, row.id)
+            propulsions.push(propulsion)
+        })
+
+        return propulsions
     }
 
     static async save(propulsion: Propulsion, pilot_name: string) {
