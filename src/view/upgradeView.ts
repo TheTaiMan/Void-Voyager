@@ -1,11 +1,11 @@
 import type UpgradeController from "../controller/upgradeController"
-import type PropulsionSystem from "../model/propulsionSystem";
+import type Propulsion from "../model/propulsion";
 import { InsufficientDistanceException } from "../model/ship";
 
 export default class UpgradeView {
     #upgradeController: UpgradeController
 
-    constructor(upgradeController: UpgradeController, inventoryPromise: Promise<Array<PropulsionSystem>>) {
+    constructor(upgradeController: UpgradeController, inventoryPromise: Promise<Array<Propulsion>>) {
         this.#upgradeController = upgradeController
 
         inventoryPromise.then((propulsion) => {
@@ -17,7 +17,7 @@ export default class UpgradeView {
      * Creates and appends the upgrade buttons to the DOM.
      * (Currently hardcoded for specific upgrade types)
      */
-    #renderButtons(propulsions: Array<PropulsionSystem>) {
+    #renderButtons(propulsions: Array<Propulsion>) {
         const app = document.querySelector("#app")!;
         const upgradeEle = document.createElement("div")
         upgradeEle.id = "upgrades"

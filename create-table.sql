@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS ship (
 );
 
 -- Instance Tables
-CREATE TABLE IF NOT EXISTS propulsion_system (
+CREATE TABLE IF NOT EXISTS propulsion (
     id SERIAL PRIMARY KEY, -- Same as NOT NULL UNIQUE
     name VARCHAR(255) NOT NULL,
     boost INT NOT NULL,

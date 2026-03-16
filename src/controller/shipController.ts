@@ -1,5 +1,5 @@
 import type Autopilot from "../model/autopilot";
-import type PropulsionSystem from "../model/propulsionSystem";
+import type Propulsion from "../model/propulsion"
 import Ship from "../model/ship";
 import ShipView from "../view/shipView";
 
@@ -19,7 +19,7 @@ export default class ShipController {
         this.#ship.engageThrusters()
     }
 
-    installUpgrade(upgrade: PropulsionSystem) {
+    installUpgrade(upgrade: Propulsion) {
         this.#ship.installUpgrade(upgrade)
     }
 

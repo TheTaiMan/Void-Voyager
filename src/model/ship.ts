@@ -10,6 +10,8 @@ import type Listener from "./listener"
 import type PropulsionSystem from "./propulsionSystem"
 
 export default class Ship {
+    #pilotName: string
+    #password: string
     #distanceTraveled: number
     #thrustPower: number
     #installedUpgrades: Array<PropulsionSystem>
@@ -18,6 +20,8 @@ export default class Ship {
     #listeners: Array<Listener>
 
     constructor() {
+        this.#pilotName = "jeff" 
+        this.#password =  "ffej"
         this.#distanceTraveled = 0
         this.#thrustPower = 1
         this.#installedUpgrades = new Array<PropulsionSystem>()
@@ -26,6 +30,10 @@ export default class Ship {
 
         this.#listeners = new Array<Listener>()
         this.#checkInvairant()
+    }
+
+    get pilotName() {
+        return this.#pilotName
     }
 
     get distanceTraveled() {

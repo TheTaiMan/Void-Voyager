@@ -1,7 +1,7 @@
 import assert from "../util/assertions"
 import db from "./connection"
 
-export default class PropulsionSystem{
+export default class Propulsion{
     readonly #name: string
     #bost: number
     #cost: number
@@ -25,8 +25,8 @@ export default class PropulsionSystem{
         return this.#cost
     }
 
-    static async getPropulsionInventory(): Promise<Array<PropulsionSystem>> {
-        const allPropulsions = new Array<PropulsionSystem>()
+    static async getPropulsionInventory(): Promise<Array<Propulsion>> {
+        const allPropulsions = new Array<Propulsion>()
 
         let results = await db()
         .query<{
@@ -36,14 +36,14 @@ export default class PropulsionSystem{
         }>("select * from propulsion_inventory");
 
         results.rows.forEach(row => {
-            let propulsion= new PropulsionSystem(row.name, row.boost, row.cost);
+            let propulsion= new Propulsion(row.name, row.boost, row.cost);
             allPropulsions.push(propulsion);
         });
 
         return allPropulsions
     }
 
-    static async getPropulsion(name: string): Promise<PropulsionSystem | null> {
+    static async getPropulsion(name: string): Promise<Propulsion | null> {
         let results = await db()
         .query<{
             name: string,
@@ -56,7 +56,7 @@ export default class PropulsionSystem{
         }
 
         const row = results.rows[0]
-        const propulsion = new PropulsionSystem(row.name, row.boost, row.cost);
+        const propulsion = new Propulsion(row.name, row.boost, row.cost);
 
         return propulsion 
     }
@@ -66,6 +66,4 @@ export default class PropulsionSystem{
         assert(this.#cost > 0, "cost must be greater than zero.")
     }
 }
-
-
 
