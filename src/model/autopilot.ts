@@ -3,12 +3,12 @@ import db from "./connection"
 
 export default class Autopilot {
     readonly #name: string
-    #passiveVelocity: number
+    #passiveThrust: number
     #cost: number
 
-    constructor(name: string, passiveVelocity: number, cost: number) {
+    constructor(name: string, passiveThrust: number, cost: number) {
         this.#name = name
-        this.#passiveVelocity = passiveVelocity
+        this.#passiveThrust = passiveThrust
         this.#cost = cost
         this.#checkInvariant()
     }
@@ -17,8 +17,8 @@ export default class Autopilot {
         return this.#name
     }
 
-    passiveVelocity(): number {
-        return this.#passiveVelocity
+    passiveThrust(): number {
+        return this.#passiveThrust
     }
 
     cost(): number {
@@ -31,12 +31,12 @@ export default class Autopilot {
         let results = await db()
         .query<{
             name: string,
-            passive_velocity: number,
+            passive_thrust: number,
             cost: number
         }>("select * from autopilot_inventory");
 
         results.rows.forEach(row => {
-            let autopilot = new Autopilot(row.name, row.passive_velocity, row.cost);
+            let autopilot = new Autopilot(row.name, row.passive_thrust, row.cost);
             allAutopilots.push(autopilot);
         });
 
@@ -47,7 +47,7 @@ export default class Autopilot {
         let results = await db()
         .query<{
             name: string,
-            passive_velocity: number,
+            passive_thrust: number,
             cost: number
         }>("select * from autopilot_inventory where name = $1", [name]);
 
@@ -56,13 +56,13 @@ export default class Autopilot {
         }
 
         const row = results.rows[0]
-        const autopilot = new Autopilot(row.name, row.passive_velocity, row.cost);
+        const autopilot = new Autopilot(row.name, row.passive_thrust, row.cost);
 
         return autopilot 
     }
 
     #checkInvariant() {
-        assert(this.#passiveVelocity > 0, "passiveVelocity must be greater than zero.")
+        assert(this.#passiveThrust > 0, "passiveThrust must be greater than zero.")
         assert(this.#cost > 0, "cost must be greater than zero.")
     }
 }

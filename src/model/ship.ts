@@ -7,14 +7,14 @@ import assert from "../util/assertions"
 import Autopilot from "./autopilot"
 
 import type Listener from "./listener"
-import type PropulsionSystem from "./propulsionSystem"
+import type Propulsion from "./propulsion"
 
 export default class Ship {
     #pilotName: string
     #password: string
     #distanceTraveled: number
     #thrustPower: number
-    #installedUpgrades: Array<PropulsionSystem>
+    #installedUpgrades: Array<Propulsion>
     #thrustsPerSecond: number
     #activeAutopilots: Array<Autopilot>
     #listeners: Array<Listener>
@@ -24,7 +24,7 @@ export default class Ship {
         this.#password =  "ffej"
         this.#distanceTraveled = 0
         this.#thrustPower = 1
-        this.#installedUpgrades = new Array<PropulsionSystem>()
+        this.#installedUpgrades = new Array<Propulsion>()
         this.#thrustsPerSecond = 0
         this.#activeAutopilots = new Array<Autopilot>()
 
@@ -102,7 +102,7 @@ export default class Ship {
         this.#checkInvairant()
     }
 
-    installUpgrade(upgrade: PropulsionSystem) {
+    installUpgrade(upgrade: Propulsion) {
         if (this.#deductDistanceTravelled(upgrade.cost())) {
             this.#installedUpgrades.push(upgrade)
             this.#updateThrustPower()
@@ -115,7 +115,7 @@ export default class Ship {
     #updateThrustsPerSecond() {
         this.#thrustsPerSecond = 0
         this.#activeAutopilots.forEach( (e) => {
-            this.#thrustsPerSecond += e.passiveVelocity()
+            this.#thrustsPerSecond += e.passiveThrust()
         })
 
         // Checks whether thrustPower is proper

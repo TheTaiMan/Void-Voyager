@@ -24,7 +24,7 @@ export default class BuildingView {
 
         autopilots.forEach(autopilot => {
             const button = document.createElement("button");
-            button.innerText = `${autopilot.name()} [x${autopilot.passiveVelocity()}] (Cost: ${autopilot.cost()})`;
+            button.innerText = `${autopilot.name()} [x${autopilot.passiveThrust()}] (Cost: ${autopilot.cost()})`;
 
             button.addEventListener("click", () => {
                 this.#handleClick(autopilot.name())

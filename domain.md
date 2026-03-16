@@ -18,13 +18,13 @@ The following is my domain model for phase 2 of the Clicker project.
 - Added `activeAutopilots` and `engageAutopilot()`.
 - Removed simple getters to reduce clutter.
 
-##### PropulsionSystem (Click Upgrades)
+##### Propulsion (Click Upgrades)
 - Added `cost()` and persisted `cost` field.
 - Added `cost > 0` invariant.
 - Added synthetic `id` to implementations.
 
 ##### Autopilot (Auto-Clickers)
-- New `Autopilot` interface (`modelName`, `passiveVelocity`, `cost`).
+- New `Autopilot` interface (`modelName`, `passiveThrust`, `cost`).
 - Implementations: `NavComputer`, `AI_Captain`
 - Added synthetic `id` and `Ship` reference for DB structure.
 
@@ -42,12 +42,12 @@ classDiagram
         -number currentSpeed
         
         %% Owned upgrades and autopilots
-        -Array~PropulsionSystem~ installedUpgrades
+        -Array~Propulsion~ installedUpgrades
         -Array~Autopilot~ activeAutopilots
         
         %% Main actions
         +engageThrusters() void
-        +installUpgrade(PropulsionSystem p) void
+        +installUpgrade(Propulsion p) void
         +engageAutopilot(Autopilot a) void
     }
 
@@ -55,7 +55,7 @@ classDiagram
     * distanceTraveled >= 0
     * currentSpeed > 0"
 
-    class PropulsionSystem {
+    class Propulsion {
         -string name
         -number boost
         -number cost
@@ -66,14 +66,14 @@ classDiagram
         -Ship ship_id
     }
 
-    note for PropulsionSystem "Invariants:
+    note for Propulsion "Invariants:
     * boost > 0
     * cost > 0"
 
     class Autopilot {
         -string name
         %% Clicks Per Second
-        -number passiveVelocity
+        -number passiveThrust
         -number cost
 
         %% No natural key exists, so a synthetic id is required
@@ -83,10 +83,10 @@ classDiagram
     }
 
     note for Autopilot "Invariants:
-    * passiveVelocity > 0
+    * passiveThrust > 0
     * cost > 0"
 
-    Ship "1" o--* "*" PropulsionSystem
+    Ship "1" o--* "*" Propulsion
     Ship "1" o--* "*" Autopilot
 ```
 

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS propulsion (
 CREATE TABLE IF NOT EXISTS autopilot (
     id SERIAL PRIMARY KEY, -- Same as NOT NULL UNIQUE
     name VARCHAR(255) NOT NULL,
-    passive_velocity INT NOT NULL,
+    passive_thrust INT NOT NULL,
     cost INT NOT NULL,
 
     ship_id VARCHAR(255),
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS propulsion_inventory (
 
 CREATE TABLE IF NOT EXISTS autopilot_inventory (
     name VARCHAR(255) PRIMARY KEY,
-    passive_velocity INT NOT NULL,
+    passive_thrust INT NOT NULL,
     cost INT NOT NULL
 );
 
@@ -56,10 +56,10 @@ INSERT INTO propulsion_inventory (name, boost, cost)
     VALUES ('Hyperdrive', 50, 500)
     ON CONFLICT (name) DO NOTHING;
 
-INSERT INTO autopilot_inventory (name, passive_velocity, cost) 
+INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
     VALUES ('NavComputer', 5, 100) 
     ON CONFLICT (name) DO NOTHING;
 
-INSERT INTO autopilot_inventory (name, passive_velocity, cost) 
+INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
     VALUES ('AI Captain', 25, 1000) 
     ON CONFLICT (name) DO NOTHING;
