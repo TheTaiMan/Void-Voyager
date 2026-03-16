@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS ship (
     pilot_name VARCHAR(255) PRIMARY KEY, -- Same as NOT NULL UNIQUE
     password VARCHAR(255) NOT NULL,
     distance_traveled INT NOT NULL,
-    current_speed INT NOT NULL
+    thrust_power INT NOT NULL,
+    thrusts_per_second INT NOT NULL
 );
 
 -- Instance Tables
@@ -62,4 +63,3 @@ INSERT INTO autopilot_inventory (name, passive_velocity, cost)
 INSERT INTO autopilot_inventory (name, passive_velocity, cost) 
     VALUES ('AI Captain', 25, 1000) 
     ON CONFLICT (name) DO NOTHING;
-
