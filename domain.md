@@ -39,7 +39,8 @@ classDiagram
         
         %% Game progress
         -number distanceTraveled
-        -number currentSpeed
+        -number thrustPower
+        -number thrustsPerSecond
         
         %% Owned upgrades and autopilots
         -Array~Propulsion~ installedUpgrades
@@ -48,12 +49,13 @@ classDiagram
         %% Main actions
         +engageThrusters() void
         +installUpgrade(Propulsion p) void
-        +engageAutopilot(Autopilot a) void
+        +installAutopilot(Autopilot a) void
     }
 
     note for Ship "Invariants:
     * distanceTraveled >= 0
-    * currentSpeed > 0"
+    * thrustPower > 0
+    * thrustsPerSecond >= 0"
 
     class Propulsion {
         -string name

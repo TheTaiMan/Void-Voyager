@@ -28,9 +28,9 @@ export default class UpgradeView {
 
         propulsions.forEach(propulsion => {
             const button = document.createElement("button");
-            button.innerText = `${propulsion.name()} [+${propulsion.boost()}] (Cost: ${propulsion.cost()})`;
+            button.innerText = `${propulsion.name} [+${propulsion.boost}] (Cost: ${propulsion.cost})`;
             button.addEventListener("click", () => {
-                this.#handleClick(propulsion.name())
+                this.#handleClick(propulsion.name)
             });
 
             upgradeEle.appendChild(button);

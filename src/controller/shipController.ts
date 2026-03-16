@@ -28,9 +28,9 @@ export default class ShipController {
     }
 
     #engageAutopilots() {
+        Ship.save(this.#ship) // ONLY to do for now
         return setInterval(() => {
             this.#ship.applyPassiveThrust();
         }, 1000);
     }
-
 }

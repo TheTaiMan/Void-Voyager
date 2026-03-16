@@ -2,6 +2,7 @@ import assert from "../util/assertions"
 import db from "./connection"
 
 export default class Autopilot {
+    #id?: number
     readonly #name: string
     #passiveThrust: number
     #cost: number
@@ -13,15 +14,23 @@ export default class Autopilot {
         this.#checkInvariant()
     }
 
-    name(): string {
+    get id() {
+        return this.#id
+    }
+
+    set id(newVal: number | undefined) {
+        this.#id = newVal
+    }
+
+    get name(): string {
         return this.#name
     }
 
-    passiveThrust(): number {
+    get passiveThrust(): number {
         return this.#passiveThrust
     }
 
-    cost(): number {
+    get cost(): number {
         return this.#cost
     }
 
@@ -33,7 +42,7 @@ export default class Autopilot {
             name: string,
             passive_thrust: number,
             cost: number
-        }>("select * from autopilot_inventory");
+        }>("SELECT * FROM autopilot_inventory");
 
         results.rows.forEach(row => {
             let autopilot = new Autopilot(row.name, row.passive_thrust, row.cost);
@@ -49,7 +58,7 @@ export default class Autopilot {
             name: string,
             passive_thrust: number,
             cost: number
-        }>("select * from autopilot_inventory where name = $1", [name]);
+        }>("SELECT * FROM autopilot_inventory WHERE name = $1", [name]);
 
         if (results.rows.length === 0) {
             return null; 
@@ -59,6 +68,19 @@ export default class Autopilot {
         const autopilot = new Autopilot(row.name, row.passive_thrust, row.cost);
 
         return autopilot 
+    }
+
+    static async save(autopilot: Autopilot, pilot_name: string) {
+        let result = await db()
+            .query<{id: number}>
+                (
+                `INSERT INTO autopilot(name, passive_thrust, cost, ship_id)
+                    VALUES($1, $2, $3, $4) 
+                    RETURNING id`,
+                    [autopilot.name, autopilot.passiveThrust, autopilot.cost, pilot_name]
+                )
+
+        autopilot.id = result.rows[0].id
     }
 
     #checkInvariant() {

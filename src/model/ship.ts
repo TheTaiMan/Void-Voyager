@@ -5,9 +5,10 @@
 
 import assert from "../util/assertions"
 import Autopilot from "./autopilot"
+import db from "./connection"
 
 import type Listener from "./listener"
-import type Propulsion from "./propulsion"
+import Propulsion from "./propulsion"
 
 export default class Ship {
     #pilotName: string
@@ -20,13 +21,13 @@ export default class Ship {
     #listeners: Array<Listener>
 
     constructor() {
-        this.#pilotName = "jeff" 
-        this.#password =  "ffej"
-        this.#distanceTraveled = 0
+        this.#pilotName = "jeff"  // Set
+        this.#password =  "ffej" // Set
+        this.#distanceTraveled = 0 // Set
         this.#thrustPower = 1
-        this.#installedUpgrades = new Array<Propulsion>()
+        this.#installedUpgrades = new Array<Propulsion>() // Set
         this.#thrustsPerSecond = 0
-        this.#activeAutopilots = new Array<Autopilot>()
+        this.#activeAutopilots = new Array<Autopilot>() // Set
 
         this.#listeners = new Array<Listener>()
         this.#checkInvairant()
@@ -34,6 +35,11 @@ export default class Ship {
 
     get pilotName() {
         return this.#pilotName
+    }
+
+    // TODO: DON"T leave this as public, as anyone can access it, just for TESTING
+    get password() {
+        return this.#password
     }
 
     get distanceTraveled() {
@@ -48,10 +54,50 @@ export default class Ship {
         return this.#thrustPower
     }
 
+    get installUpgrades() {
+        return this.#installedUpgrades
+    }
+
     get thrustsPerSecond() {
         return this.#thrustsPerSecond
     }
 
+    get activeAutopilots() {
+        return this.#activeAutopilots
+    }
+
+    static async saveTravelledDistance(ship: Ship) {
+        await db().query<{ pilot_name: string, password: string, distance_traveled: number }>(
+                `UPDATE ship set distance_traveled = $1 WHERE pilot_name = $2`,
+                    [ship.distanceTraveled, ship.pilotName]
+        )
+    }
+
+    static async save(ship: Ship) {
+        // TODO: This has to be a has that matches with my password 
+        let results = await db()
+            .query<{ pilot_name: string, password: string, distance_traveled: number}>
+                ( 
+                 `INSERT INTO ship(pilot_name, password, distance_traveled)
+                     VALUES($1, $2, $3)
+                     ON CONFLICT (pilot_name)
+                     DO UPDATE SET distance_traveled = $3`,
+                    [ship.pilotName, ship.password, ship.distanceTraveled]
+                );
+
+        ship.installUpgrades.forEach( (propulsion: Propulsion) => {
+            if (!propulsion.id) {
+                Propulsion.save(propulsion, ship.pilotName)
+            }
+
+        })
+
+        ship.activeAutopilots.forEach( (autopilot: Autopilot) => {
+            if (!autopilot.id) {
+                Autopilot.save(autopilot, ship.pilotName)
+            }
+        })
+    }
 
     #checkInvairant() {
         assert(this.distanceTraveled >= 0,
@@ -65,6 +111,7 @@ export default class Ship {
     engageThrusters() {
         this.#distanceTraveled += this.thrustPower
         // Checks whether distanceTraveled is proper
+        Ship.saveTravelledDistance(this)
         this.#checkInvairant()
         this.#notifyAll()
     }
@@ -75,6 +122,7 @@ export default class Ship {
         // Only update and notify if there is actual movement
         if (passiveDistance > 0) {
             this.distanceTraveled += passiveDistance;
+            Ship.saveTravelledDistance(this)
             this.#checkInvairant();
             this.#notifyAll();
         }
@@ -95,7 +143,7 @@ export default class Ship {
         // Updates how much each click is worth
         this.#thrustPower = 1
         this.#installedUpgrades.forEach(e => {
-            this.#thrustPower += e.boost()
+            this.#thrustPower += e.boost
         })
 
         // Checks whether thrustPower is proper
@@ -103,9 +151,10 @@ export default class Ship {
     }
 
     installUpgrade(upgrade: Propulsion) {
-        if (this.#deductDistanceTravelled(upgrade.cost())) {
+        if (this.#deductDistanceTravelled(upgrade.cost)) {
             this.#installedUpgrades.push(upgrade)
             this.#updateThrustPower()
+            Ship.save(this)
             this.#notifyAll()
         } else {
             throw new InsufficientDistanceException();
@@ -115,7 +164,7 @@ export default class Ship {
     #updateThrustsPerSecond() {
         this.#thrustsPerSecond = 0
         this.#activeAutopilots.forEach( (e) => {
-            this.#thrustsPerSecond += e.passiveThrust()
+            this.#thrustsPerSecond += e.passiveThrust
         })
 
         // Checks whether thrustPower is proper
@@ -123,9 +172,10 @@ export default class Ship {
     }
 
     installAutopilot(autopilot: Autopilot) {
-        if (this.#deductDistanceTravelled(autopilot.cost())) {
+        if (this.#deductDistanceTravelled(autopilot.cost)) {
             this.#activeAutopilots.push(autopilot)
             this.#updateThrustsPerSecond()
+            Ship.save(this)
             this.#notifyAll()
         } else {
             throw new InsufficientDistanceException();

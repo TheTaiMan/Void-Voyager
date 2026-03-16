@@ -6,9 +6,9 @@
 CREATE TABLE IF NOT EXISTS ship (
     pilot_name VARCHAR(255) PRIMARY KEY, -- Same as NOT NULL UNIQUE
     password VARCHAR(255) NOT NULL,
-    distance_traveled INT NOT NULL,
-    thrust_power INT NOT NULL,
-    thrusts_per_second INT NOT NULL
+    distance_traveled INT NOT NULL
+    -- thrust_power INT NOT NULL, -- I don't need these as they are always recalculated from the Arrays
+    -- thrusts_per_second INT NOT NULL
 );
 
 -- Instance Tables
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS propulsion (
     boost INT NOT NULL,
     cost INT NOT NULL,
 
-    ship_id VARCHAR(255),
+    ship_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (ship_id) REFERENCES ship(pilot_name)
         ON DELETE CASCADE
         
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS autopilot (
     passive_thrust INT NOT NULL,
     cost INT NOT NULL,
 
-    ship_id VARCHAR(255),
+    ship_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (ship_id) REFERENCES ship(pilot_name)
         ON DELETE CASCADE
 );

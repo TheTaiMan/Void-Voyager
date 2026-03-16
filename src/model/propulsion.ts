@@ -2,6 +2,7 @@ import assert from "../util/assertions"
 import db from "./connection"
 
 export default class Propulsion{
+    #id?: number
     readonly #name: string
     #bost: number
     #cost: number
@@ -13,15 +14,23 @@ export default class Propulsion{
         this.#checkInvariant()
     }
 
-    name(): string {
+    get id() {
+        return this.#id
+    }
+
+    set id(newVal: number | undefined) {
+        this.#id = newVal
+    }
+
+    get name(): string {
         return this.#name
     }
 
-    boost(): number {
+    get boost(): number {
         return this.#bost
     }
 
-    cost(): number {
+    get cost(): number {
         return this.#cost
     }
 
@@ -33,7 +42,7 @@ export default class Propulsion{
             name: string,
             boost: number,
             cost: number
-        }>("select * from propulsion_inventory");
+        }>("SELECT * FROM propulsion_inventory");
 
         results.rows.forEach(row => {
             let propulsion= new Propulsion(row.name, row.boost, row.cost);
@@ -49,7 +58,7 @@ export default class Propulsion{
             name: string,
             boost: number,
             cost: number
-        }>("select * from propulsion_inventory where name = $1", [name]);
+        }>("SELECT * FROM propulsion_inventory WHERE name = $1", [name]);
 
         if (results.rows.length === 0) {
             return null; 
@@ -59,6 +68,19 @@ export default class Propulsion{
         const propulsion = new Propulsion(row.name, row.boost, row.cost);
 
         return propulsion 
+    }
+
+    static async save(propulsion: Propulsion, pilot_name: string) {
+        let result = await db()
+            .query<{id: number}>
+                (
+                `INSERT INTO propulsion(name, boost, cost, ship_id)
+                    VALUES($1, $2, $3, $4) 
+                    RETURNING id`,
+                    [propulsion.name, propulsion.boost, propulsion.cost, pilot_name]
+                )
+
+        propulsion.id = result.rows[0].id
     }
 
     #checkInvariant() {
