@@ -13,7 +13,6 @@ import Propulsion from "./propulsion"
 
 export default class Ship {
     #pilotName: string
-    #password: string
     #distanceTraveled: number
     #thrustPower: number
     #installedUpgrades: Array<Propulsion>
@@ -23,13 +22,11 @@ export default class Ship {
 
     constructor(
         pilotName: string,
-        password: string,
         distanceTraveled: number,
         installedUpgrades: Array<Propulsion>,
         activeAutopilots: Array<Autopilot>
     ) {
-        this.#pilotName = pilotName 
-        this.#password =  password 
+        this.#pilotName = pilotName
         this.#distanceTraveled = distanceTraveled
         this.#installedUpgrades = installedUpgrades
         this.#thrustPower = 1
@@ -37,8 +34,8 @@ export default class Ship {
         this.#activeAutopilots = activeAutopilots
         this.#listeners = new Array<Listener>()
 
-        this.#updateThrustPower() 
-        this.#updateThrustsPerSecond() 
+        this.#updateThrustPower()
+        this.#updateThrustsPerSecond()
         this.#checkInvairant()
     }
 
@@ -71,20 +68,20 @@ export default class Ship {
     }
 
     static async saveTravelledDistance(ship: Ship) {
-        await db().query<{ pilot_name: string, password: string, distance_traveled: number }>(
-                `UPDATE ship set distance_traveled = $1 WHERE pilot_name = $2`,
-                    [ship.distanceTraveled, ship.pilotName]
+        await db().query(
+            `UPDATE ship SET distance_traveled = $1 WHERE pilot_name = $2`,
+            [ship.distanceTraveled, ship.pilotName]
         )
     }
 
     static async saveInventory(ship: Ship) {
-        ship.installUpgrades.forEach( (propulsion: Propulsion) => {
+        ship.installUpgrades.forEach((propulsion: Propulsion) => {
             if (!propulsion.id) {
                 Propulsion.save(propulsion, ship.pilotName)
             }
         })
 
-        ship.activeAutopilots.forEach( (autopilot: Autopilot) => {
+        ship.activeAutopilots.forEach((autopilot: Autopilot) => {
             if (!autopilot.id) {
                 Autopilot.save(autopilot, ship.pilotName)
             }
@@ -92,8 +89,8 @@ export default class Ship {
     }
 
     /**
-     * Looks up the pilot by name, then re-derives the PBKDF2 hash using
-     * the salt embedded in the stored "saltHex:hashHex" string and compares.
+     * Looks up the pilot by name, re-derives the PBKDF2 hash using the salt
+     * embedded in the stored "saltHex:hashHex" string, and compares.
      * Returns the pilot's saved data on success, or null on failure.
      */
     static async authenticate(
@@ -128,12 +125,11 @@ export default class Ship {
     static async register(pilotName: string, password: string): Promise<boolean> {
         try {
             const hashed = await hashPassword(password)
-            await db()
-                .query(
-                    `INSERT INTO ship(pilot_name, password, distance_traveled)
-                     VALUES($1, $2, $3)`,
-                    [pilotName, hashed, 0]
-                )
+            await db().query(
+                `INSERT INTO ship(pilot_name, password, distance_traveled)
+                 VALUES($1, $2, $3)`,
+                [pilotName, hashed, 0]
+            )
             return true
         } catch {
             return false
@@ -157,17 +153,17 @@ export default class Ship {
     }
 
     applyPassiveThrust() {
-        const passiveDistance = this.thrustPower * this.thrustsPerSecond;
+        const passiveDistance = this.thrustPower * this.thrustsPerSecond
 
         if (passiveDistance > 0) {
-            this.distanceTraveled += passiveDistance;
+            this.distanceTraveled += passiveDistance
             Ship.saveTravelledDistance(this)
-            this.#checkInvairant();
-            this.#notifyAll();
+            this.#checkInvairant()
+            this.#notifyAll()
         }
     }
 
-    #deductDistanceTravelled(amount: number) : boolean {
+    #deductDistanceTravelled(amount: number): boolean {
         const newDistance = this.distanceTraveled - amount
         if (newDistance < 0) {
             return false
@@ -194,13 +190,13 @@ export default class Ship {
             Ship.saveInventory(this)
             this.#notifyAll()
         } else {
-            throw new InsufficientDistanceException();
+            throw new InsufficientDistanceException()
         }
     }
 
     #updateThrustsPerSecond() {
         this.#thrustsPerSecond = 0
-        this.#activeAutopilots.forEach( (e) => {
+        this.#activeAutopilots.forEach((e) => {
             this.#thrustsPerSecond += e.passiveThrust
         })
         this.#checkInvairant()
@@ -213,7 +209,7 @@ export default class Ship {
             Ship.saveInventory(this)
             this.#notifyAll()
         } else {
-            throw new InsufficientDistanceException();
+            throw new InsufficientDistanceException()
         }
     }
 

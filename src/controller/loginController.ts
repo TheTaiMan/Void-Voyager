@@ -1,8 +1,7 @@
 /**
  * Orchestrates the login/registration flow. Creates the LoginView,
  * validates credentials against the DB, and bootstraps the full
- * application once authenticated. Passes an onLogout callback
- * downstream so any controller can trigger a clean return to login.
+ * application once authenticated.
  */
 
 import Ship from "../model/ship"
@@ -13,10 +12,8 @@ import BuildingController from "./buildingController"
 
 export default class LoginController {
     #loginView: LoginView
-    #onRestart: () => void
 
-    constructor(onRestart: () => void) {
-        this.#onRestart = onRestart
+    constructor() {
         this.#loginView = new LoginView((pilotName, password, isNewAccount) => {
             this.#handleSubmit(pilotName, password, isNewAccount)
         })
@@ -45,7 +42,7 @@ export default class LoginController {
             return
         }
 
-        await this.#startApp(pilotName, password, 0)
+        await this.#startApp(pilotName, 0)
     }
 
     async #login(pilotName: string, password: string) {
@@ -56,18 +53,13 @@ export default class LoginController {
             return
         }
 
-        await this.#startApp(credentials.pilotName, credentials.password, credentials.distanceTraveled)
+        await this.#startApp(credentials.pilotName, credentials.distanceTraveled)
     }
 
-    async #startApp(pilotName: string, password: string, distanceTraveled: number) {
+    async #startApp(pilotName: string, distanceTraveled: number) {
         this.#loginView.destroy()
 
-        const onLogout = () => {
-            document.querySelector<HTMLDivElement>('#app')!.innerHTML = ''
-            this.#onRestart()
-        }
-
-        const shipController = new ShipController(pilotName, password, distanceTraveled, onLogout)
+        const shipController = new ShipController(pilotName, distanceTraveled)
         await shipController.initialize()
 
         const upgradeController = new UpgradeController(shipController)

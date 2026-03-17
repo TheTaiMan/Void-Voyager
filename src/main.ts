@@ -4,7 +4,7 @@ import ddl from "../create-table.sql?raw"
 import LoginController from "./controller/loginController"
 
 const startApp = () => {
-    new LoginController(startApp)
+    new LoginController()
 }
 
 const main = async () => {

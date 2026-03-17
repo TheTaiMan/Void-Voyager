@@ -9,12 +9,10 @@ export default class ShipController {
     #automationId!: number;
 
     #pilotName: string;
-    #password: string;
     #distanceTravelled: number;
 
-    constructor(pilotName: string, password: string, distanceTravelled: number) {
+    constructor(pilotName: string, distanceTravelled: number) {
         this.#pilotName = pilotName;
-        this.#password = password;
         this.#distanceTravelled = distanceTravelled;
     }
 
@@ -27,7 +25,6 @@ export default class ShipController {
 
         this.#ship = new Ship(
             this.#pilotName, 
-            this.#password, 
             this.#distanceTravelled, 
             installedUpgrades, 
             activeAutopilots
