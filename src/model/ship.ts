@@ -4,6 +4,7 @@
  */
 
 import assert from "../util/assertions"
+import { hashPassword, verifyPassword } from "../util/passwordHash"
 import Autopilot from "./autopilot"
 import db from "./connection"
 
@@ -45,11 +46,6 @@ export default class Ship {
         return this.#pilotName
     }
 
-    // TODO: DON"T leave this as public, as anyone can access it, just for TESTING
-    get password() {
-        return this.#password
-    }
-
     get distanceTraveled() {
         return this.#distanceTraveled
     }
@@ -81,23 +77,11 @@ export default class Ship {
         )
     }
 
-    static async save(ship: Ship) {
-        // TODO: This has to be a has that matches with my password 
-        let results = await db()
-            .query<{ pilot_name: string, password: string, distance_traveled: number}>
-                ( 
-                 `INSERT INTO ship(pilot_name, password, distance_traveled)
-                     VALUES($1, $2, $3)
-                     ON CONFLICT (pilot_name)
-                     DO UPDATE SET distance_traveled = $3`,
-                    [ship.pilotName, ship.password, ship.distanceTraveled]
-                );
-
+    static async saveInventory(ship: Ship) {
         ship.installUpgrades.forEach( (propulsion: Propulsion) => {
             if (!propulsion.id) {
                 Propulsion.save(propulsion, ship.pilotName)
             }
-
         })
 
         ship.activeAutopilots.forEach( (autopilot: Autopilot) => {
@@ -105,6 +89,55 @@ export default class Ship {
                 Autopilot.save(autopilot, ship.pilotName)
             }
         })
+    }
+
+    /**
+     * Looks up the pilot by name, then re-derives the PBKDF2 hash using
+     * the salt embedded in the stored "saltHex:hashHex" string and compares.
+     * Returns the pilot's saved data on success, or null on failure.
+     */
+    static async authenticate(
+        pilotName: string,
+        password: string
+    ): Promise<{ pilotName: string, distanceTraveled: number } | null> {
+        const result = await db()
+            .query<{ pilot_name: string, password: string, distance_traveled: number }>(
+                `SELECT pilot_name, password, distance_traveled
+                 FROM ship
+                 WHERE pilot_name = $1`,
+                [pilotName]
+            )
+
+        if (result.rows.length === 0) return null
+
+        const row = result.rows[0]
+        const match = await verifyPassword(password, row.password)
+
+        if (!match) return null
+
+        return {
+            pilotName: row.pilot_name,
+            distanceTraveled: row.distance_traveled
+        }
+    }
+
+    /**
+     * Hashes the password before storing. Returns false if the pilot
+     * name is already taken (PRIMARY KEY conflict).
+     */
+    static async register(pilotName: string, password: string): Promise<boolean> {
+        try {
+            const hashed = await hashPassword(password)
+            await db()
+                .query(
+                    `INSERT INTO ship(pilot_name, password, distance_traveled)
+                     VALUES($1, $2, $3)`,
+                    [pilotName, hashed, 0]
+                )
+            return true
+        } catch {
+            return false
+        }
     }
 
     #checkInvairant() {
@@ -118,7 +151,6 @@ export default class Ship {
 
     engageThrusters() {
         this.#distanceTraveled += this.thrustPower
-        // Checks whether distanceTraveled is proper
         Ship.saveTravelledDistance(this)
         this.#checkInvairant()
         this.#notifyAll()
@@ -127,7 +159,6 @@ export default class Ship {
     applyPassiveThrust() {
         const passiveDistance = this.thrustPower * this.thrustsPerSecond;
 
-        // Only update and notify if there is actual movement
         if (passiveDistance > 0) {
             this.distanceTraveled += passiveDistance;
             Ship.saveTravelledDistance(this)
@@ -143,18 +174,16 @@ export default class Ship {
         }
 
         this.distanceTraveled = newDistance
+        Ship.saveTravelledDistance(this)
         this.#checkInvairant()
         return true
     }
 
     #updateThrustPower() {
-        // Updates how much each click is worth
         this.#thrustPower = 1
         this.#installedUpgrades.forEach(e => {
             this.#thrustPower += e.boost
         })
-
-        // Checks whether thrustPower is proper
         this.#checkInvairant()
     }
 
@@ -162,7 +191,7 @@ export default class Ship {
         if (this.#deductDistanceTravelled(upgrade.cost)) {
             this.#installedUpgrades.push(upgrade)
             this.#updateThrustPower()
-            Ship.save(this)
+            Ship.saveInventory(this)
             this.#notifyAll()
         } else {
             throw new InsufficientDistanceException();
@@ -174,8 +203,6 @@ export default class Ship {
         this.#activeAutopilots.forEach( (e) => {
             this.#thrustsPerSecond += e.passiveThrust
         })
-
-        // Checks whether thrustPower is proper
         this.#checkInvairant()
     }
 
@@ -183,7 +210,7 @@ export default class Ship {
         if (this.#deductDistanceTravelled(autopilot.cost)) {
             this.#activeAutopilots.push(autopilot)
             this.#updateThrustsPerSecond()
-            Ship.save(this)
+            Ship.saveInventory(this)
             this.#notifyAll()
         } else {
             throw new InsufficientDistanceException();
