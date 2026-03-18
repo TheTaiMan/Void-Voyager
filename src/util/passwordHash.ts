@@ -2,12 +2,13 @@
  * Password hashing and verification using PBKDF2 via the Web Crypto API.
  * Stores salt and hash together as a single "salt:hash" hex string —
  * no extra DB column needed.
+ * https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveKey
  */
 
 const ITERATIONS = 100_000
 const KEY_LENGTH  = 256
 
-async function deriveKey(password: string, salt: Uint8Array): Promise<ArrayBuffer> {
+async function deriveKey(password: string, salt: Uint8Array<ArrayBuffer>): Promise<ArrayBuffer> {
     const keyMaterial = await crypto.subtle.importKey(
         "raw",
         new TextEncoder().encode(password),

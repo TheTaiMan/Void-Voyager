@@ -19,19 +19,13 @@ export default class LoginView {
         const app = document.querySelector<HTMLDivElement>('#app')!
         app.innerHTML = ''
 
-        const screen = document.createElement('div')
-        const card = document.createElement('div')
         const title = document.createElement('h1')
         title.textContent = 'Void Voyager'
-        const subtitle = document.createElement('p')
-        subtitle.textContent = 'Pilot Authentication'
+
         const pilotField = this.#createField('pilot-name', 'Pilot Name', 'text', 'e.g. nova_hawk')
         const passwordField = this.#createField('password', 'Password', 'password', '••••••••')
 
         this.#errorEl = document.createElement('p')
-        this.#errorEl.setAttribute('aria-live', 'polite')
-
-        const actions = document.createElement('div')
 
         this.#submitBtn = document.createElement('button')
         this.#submitBtn.textContent = 'Launch'
@@ -49,12 +43,7 @@ export default class LoginView {
             this.#onSubmit(pilotName, password, true)
         })
 
-        actions.append(this.#submitBtn, registerBtn)
-        card.append(title, subtitle, pilotField, passwordField, this.#errorEl, actions)
-        screen.appendChild(card)
-        app.appendChild(screen)
-
-        // Auto-focus the first input
+        app.append(title, pilotField, passwordField, this.#errorEl, this.#submitBtn, registerBtn)
         ; (pilotField.querySelector('input') as HTMLInputElement).focus()
     }
 

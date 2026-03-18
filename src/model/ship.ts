@@ -93,10 +93,9 @@ export default class Ship {
      * embedded in the stored "saltHex:hashHex" string, and compares.
      * Returns the pilot's saved data on success, or null on failure.
      */
-    static async authenticate(
-        pilotName: string,
-        password: string
-    ): Promise<{ pilotName: string, distanceTraveled: number } | null> {
+    static async authenticate( pilotName: string, password: string):
+        Promise<{ pilotName: string, distanceTraveled: number } | null> {
+
         const result = await db()
             .query<{ pilot_name: string, password: string, distance_traveled: number }>(
                 `SELECT pilot_name, password, distance_traveled
