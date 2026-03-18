@@ -7,10 +7,6 @@ date: Winter 2026
 # Flow of Interaction Diagrams
 The following are the 2 tasks as instructed by phase 2 of the Clicker project.
 
-### Change Log
-- Added Task 3: Account creation and login flow with error paths.
-- Added Task 4: Generalized shipyard purchase flow (see note below).
-
 # Phase 1
 
 ### Task 1
