@@ -9,6 +9,21 @@ date: Winter 2026
 The following is my domain model for phase 2 of the Clicker project. 
 
 ### Change Log
+#### Structural Changes (Inventory Support)
+* Removed `PropulsionSystem` and `Autopilot` interfaces and their implementations (`JumpDrive`, `Hyperdrive`, `NavComputer`, `AI_Captain`)
+* Replaced them with generic `Propulsion` and `Autopilot` classes for database driven configuration
+
+#### Ship Class Updates
+* Removed `password` property (use secure authentication instead)
+* Replaced `currentSpeed` with `thrustPower`
+* Added `thrustsPerSecond` for passive generation
+* Updated invariants: `thrustPower > 0`, `thrustsPerSecond >= 0`
+* Renamed `engageAutopilot` to `installAutopilot`
+* Added `applyPassiveThrust` method
+
+#### Propulsion and Autopilot Updates
+* Renamed `passiveVelocity` to `passiveThrust`
+* Renamed `ship` to `ship_id` (foreign key)
 
 ```mermaid
 classDiagram
@@ -17,7 +32,6 @@ classDiagram
         %% Account info
         %% pilotName is the natural key, no synthetic id needed
         -~string pilotName
-        -string password
         
         %% Game progress
         -number distanceTraveled
@@ -30,6 +44,7 @@ classDiagram
         
         %% Main actions
         +engageThrusters() void
+        +applyPassiveThrust() void
         +installUpgrade(Propulsion p) void
         +installAutopilot(Autopilot a) void
     }
@@ -46,7 +61,6 @@ classDiagram
 
         %% No natural key exists, so a synthetic id is required
         -~number id
-        %% ship is a DB only
         -Ship ship_id
     }
 
@@ -62,7 +76,6 @@ classDiagram
 
         %% No natural key exists, so a synthetic id is required
         -~number id
-        %% ship is a DB only
         -Ship ship_id
     }
 

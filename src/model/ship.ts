@@ -1,8 +1,3 @@
-/**
- * Maintains the state of the ship, including distance traveled, current speed,
- * and installed upgrades. Notifies listeners (Observers) when state changes.
- */
-
 import assert from "../util/assertions"
 import { hashPassword, verifyPassword } from "../util/passwordHash"
 import Autopilot from "./autopilot"
@@ -11,6 +6,11 @@ import db from "./connection"
 import type Listener from "./listener"
 import Propulsion from "./propulsion"
 
+
+/**
+ * Maintains the state of the ship, including distance traveled, current speed,
+ * and installed upgrades. Notifies listeners (Observers) when state changes.
+ */
 export default class Ship {
     #pilotName: string
     #distanceTraveled: number
