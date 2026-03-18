@@ -5,12 +5,14 @@ date: Winter 2026
 ---
 
 # Overview
-Void Voyager is an implementation of Cookie Clicker (in both gameplay and alliteration) for COMP 2452 in Winter 2026. You are the captain of an experimental spacecraft sitting on the launchpad. Your goal is to travel as far from Earth as possible (Physics may not apply). 
+Void Voyager is an implementation of Cookie Clicker (in both gameplay and alliteration) for COMP 2452 in Winter 2026. You are the captain of an experimental spacecraft sitting on the launchpad. Your goal is to travel as far from Earth as possible (Physics may not apply). With the new Phase 2 updates, you can now register a user account and switch between different pilot profiles to securely save your journey. 
 
 ### Gameplay Loop
 * Engage Thrusters: Every interaction (click) propels your ship forward, increasing your Distance Traveled (measured in Light Years).
-* The Shipyard: As you travel further, you gather flight data (your score) which allows you to install better propulsion systems.
-* The Upgrade: Installing better engines increases your Speed (Light Years gained per click), allowing you to reach deep space faster.
+* The Shipyard: As you travel further, you use your accumulated distance to purchase better components from the database inventory.
+* Propulsion Upgrades: Installing better active engines increases your Thrust Power (Light Years gained per click), allowing you to reach deep space faster.
+* Autopilot Systems: You can now install passive systems (like AI Captains and NavComputers) that automatically increase your distance traveled every second.
+* Pilot Roster (Accounts): You can create an account, log in, and switch between different captains.
 
 # Running
 1.  Install dependencies:
@@ -21,6 +23,17 @@ Void Voyager is an implementation of Cookie Clicker (in both gameplay and allite
 2.  Start the development server:
     ```bash
     npx vite
+    ```
+
+# Testing
+1.  Run the standard test suite:
+    ```bash
+    npx vitest
+    ```
+
+2.  Run the test suite and generate a coverage report:
+    ```bash
+    npx vitest run --coverage
     ```
 
 # Domain model and flow diagrams
