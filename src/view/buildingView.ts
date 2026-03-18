@@ -2,6 +2,7 @@ import type BuildingController from "../controller/buildingController"
 import type Autopilot from "../model/autopilot";
 import { InsufficientDistanceException } from "../model/ship";
 
+// Renders the list of available autopilots and handles purchase clicks
 export default class BuildingView {
     #buildingController: BuildingController
     #buildingEle: HTMLDivElement
@@ -15,6 +16,7 @@ export default class BuildingView {
         })
     }
 
+    // Create and display a button for each autopilot
     #renderButtons(autopilots: Array<Autopilot>) {
         const app = document.querySelector("#app")!
 
@@ -34,6 +36,7 @@ export default class BuildingView {
         app.appendChild(this.#buildingEle)
     }
 
+    // Display a temporary error message
     #showErrorMessage(message: string) {
         const errorBox = document.createElement("div")
         errorBox.innerText = message
@@ -49,6 +52,7 @@ export default class BuildingView {
         }, 3000)
     }
 
+    // Handle autopilot purchase attempt and display errors if any
     async #handleClick(name: string) {
         try {
             await this.#buildingController.handleClick(name)

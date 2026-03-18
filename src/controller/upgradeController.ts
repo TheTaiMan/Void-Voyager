@@ -2,6 +2,7 @@ import Propulsion from "../model/propulsion"
 import UpgradeView from "../view/upgradeView"
 import ShipController from "./shipController"
 
+// Manages the logic for purchasing and installing propulsion upgrades
 export default class UpgradeController {
     #shipController: ShipController
     #upgradeView: UpgradeView
@@ -13,6 +14,7 @@ export default class UpgradeController {
     }
 
 
+    // Handle user click to purchase an upgrade
     async handleClick(name: string) {
         const propulsion = await Propulsion.getPropulsion(name);
 

@@ -1,6 +1,7 @@
 import assert from "../util/assertions"
 import db from "./connection"
 
+// Represents an autopilot that generates passive thrust
 export default class Autopilot {
     readonly #name: string
     #passiveThrust: number
@@ -35,6 +36,7 @@ export default class Autopilot {
         return this.#cost
     }
 
+    // Fetch all available autopilots from database
     static async getAutopilotsInventory(): Promise<Array<Autopilot>> {
         const allAutopilots = new Array<Autopilot>()
 
@@ -53,6 +55,7 @@ export default class Autopilot {
         return allAutopilots
     }
 
+    // Fetch a single autopilot by name from database
     static async getAutopilot(name: string): Promise<Autopilot | null> {
         let results = await db()
         .query<{
@@ -71,6 +74,7 @@ export default class Autopilot {
         return autopilot 
     }
 
+    // Fetch active autopilots installed on a specific ship
     static async activeAutopilots(pilotName: string) {
         const autopilots = new Array<Autopilot>()
 
@@ -94,6 +98,7 @@ export default class Autopilot {
         return autopilots
     }
 
+    // Save an installed autopilot to the database
     static async save(autopilot: Autopilot, pilot_name: string) {
         let result = await db()
             .query<{id: number}>
@@ -107,6 +112,7 @@ export default class Autopilot {
         autopilot.id = result.rows[0].id
     }
 
+    // Ensure autopilot properties are valid
     #checkInvariant() {
         assert(this.#passiveThrust > 0, "passiveThrust must be greater than zero.")
         assert(this.#cost > 0, "cost must be greater than zero.")

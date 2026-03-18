@@ -1,13 +1,9 @@
-/**
- * Responsible for creating the ships UI elements and updating them
- * when the ship model changes (Observer pattern).
- */
-
 import type Ship from "../model/ship";
 import type Listener from "../model/listener";
 
 import ShipController from "../controller/shipController";
 
+// Creates ship UI elements and updates them when the model changes (Observer pattern)
 export default class ShipView implements Listener {
     #ship: Ship
     #shipController: ShipController
@@ -20,6 +16,7 @@ export default class ShipView implements Listener {
         this.#initializeUI()
     }
 
+    // Build the initial ship UI elements
     #initializeUI() {
         const app = document.querySelector("#app")!
 
@@ -41,6 +38,7 @@ export default class ShipView implements Listener {
             .addEventListener("click", () => this.#shipController.engageThrusters())
     }
 
+    // Update the UI when the ship state changes
     notify() {
         const speed = this.#ship.thrustPower * this.#ship.thrustsPerSecond
 

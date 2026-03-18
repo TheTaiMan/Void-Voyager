@@ -1,15 +1,10 @@
-/**
- * Orchestrates the login/registration flow. Creates the LoginView,
- * validates credentials against the DB, and bootstraps the full
- * application once authenticated.
- */
-
 import Ship from "../model/ship"
 import LoginView from "../view/loginView"
 import ShipController from "./shipController"
 import UpgradeController from "./upgradeController"
 import BuildingController from "./buildingController"
 
+// Handles login and registration, creates the LoginView and checks credentials against the database
 export default class LoginController {
     #loginView: LoginView
 
@@ -19,6 +14,7 @@ export default class LoginController {
         })
     }
 
+    // Process login or registration attempt
     async #handleSubmit(pilotName: string, password: string, isNewAccount: boolean) {
         if (!pilotName || !password) {
             this.#loginView.showError('Pilot name and password are required.')
@@ -34,6 +30,7 @@ export default class LoginController {
         }
     }
 
+    // Register a new pilot
     async #register(pilotName: string, password: string) {
         const registered = await Ship.register(pilotName, password)
 
@@ -45,6 +42,7 @@ export default class LoginController {
         await this.#startApp(pilotName, 0)
     }
 
+    // Authenticate an existing pilot
     async #login(pilotName: string, password: string) {
         const credentials = await Ship.authenticate(pilotName, password)
 
@@ -56,6 +54,7 @@ export default class LoginController {
         await this.#startApp(credentials.pilotName, credentials.distanceTraveled)
     }
 
+    // Launch main application after successful login
     async #startApp(pilotName: string, distanceTraveled: number) {
         this.#loginView.destroy()
 

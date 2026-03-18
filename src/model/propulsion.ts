@@ -1,6 +1,7 @@
 import assert from "../util/assertions"
 import db from "./connection"
 
+// Represents a propulsion upgrade that boosts thrust power
 export default class Propulsion{
     readonly #name: string
     #bost: number
@@ -35,6 +36,7 @@ export default class Propulsion{
         return this.#cost
     }
 
+    // Fetch all available propulsion upgrades from database
     static async getPropulsionInventory(): Promise<Array<Propulsion>> {
         const allPropulsions = new Array<Propulsion>()
 
@@ -53,6 +55,7 @@ export default class Propulsion{
         return allPropulsions
     }
 
+    // Fetch a single propulsion upgrade by name from database
     static async getPropulsion(name: string): Promise<Propulsion | null> {
         let results = await db()
         .query<{
@@ -71,6 +74,7 @@ export default class Propulsion{
         return propulsion 
     }
 
+    // Fetch installed propulsion upgrades for a specific ship
     static async installedPropulsions(pilotName: string) {
         const propulsions = new Array<Propulsion>()
 
@@ -94,6 +98,7 @@ export default class Propulsion{
         return propulsions
     }
 
+    // Save an installed propulsion upgrade to the database
     static async save(propulsion: Propulsion, pilot_name: string) {
         let result = await db()
             .query<{id: number}>
@@ -107,6 +112,7 @@ export default class Propulsion{
         propulsion.id = result.rows[0].id
     }
 
+    // Ensure propulsion properties are valid
     #checkInvariant() {
         assert(this.#bost > 0, "bost must be greater than zero.")
         assert(this.#cost > 0, "cost must be greater than zero.")

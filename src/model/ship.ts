@@ -67,6 +67,7 @@ export default class Ship {
         return this.#activeAutopilots
     }
 
+    // Save traveled distance to the database
     static async saveTravelledDistance(ship: Ship) {
         await db().query(
             `UPDATE ship SET distance_traveled = $1 WHERE pilot_name = $2`,
@@ -74,6 +75,7 @@ export default class Ship {
         )
     }
 
+    // Save ships inventory (upgrades and autopilots) to database
     static async saveInventory(ship: Ship) {
         ship.installUpgrades.forEach((propulsion: Propulsion) => {
             if (!propulsion.id) {
@@ -88,10 +90,10 @@ export default class Ship {
         })
     }
 
+
     /**
-     * Looks up the pilot by name, re-derives the PBKDF2 hash using the salt
-     * embedded in the stored "saltHex:hashHex" string, and compares.
-     * Returns the pilot's saved data on success, or null on failure.
+     * Looks up the pilot by name, rederives the PBKDF2 hash using the stored salt,
+     * compares it, and returns the pilot's data if successful or null if not
      */
     static async authenticate( pilotName: string, password: string):
         Promise<{ pilotName: string, distanceTraveled: number } | null> {
@@ -119,7 +121,7 @@ export default class Ship {
 
     /**
      * Hashes the password before storing. Returns false if the pilot
-     * name is already taken (PRIMARY KEY conflict).
+     * name is already taken.
      */
     static async register(pilotName: string, password: string): Promise<boolean> {
         try {
@@ -144,6 +146,7 @@ export default class Ship {
                "Thrust per second must greater than or equal to zero.")
     }
 
+    // Increase distance by thrust power and notify listeners
     engageThrusters() {
         this.#distanceTraveled += this.thrustPower
         Ship.saveTravelledDistance(this)
@@ -151,6 +154,7 @@ export default class Ship {
         this.#notifyAll()
     }
 
+    // Apply passive thrust from active autopilots
     applyPassiveThrust() {
         const passiveDistance = this.thrustPower * this.thrustsPerSecond
 
@@ -162,6 +166,7 @@ export default class Ship {
         }
     }
 
+    // Deduct distance and return true on success, false on failure
     #deductDistanceTravelled(amount: number): boolean {
         const newDistance = this.distanceTraveled - amount
         if (newDistance < 0) {
@@ -174,6 +179,7 @@ export default class Ship {
         return true
     }
 
+    // Recalculate total thrust power from installed upgrades
     #updateThrustPower() {
         this.#thrustPower = 1
         this.#installedUpgrades.forEach(e => {
@@ -182,6 +188,7 @@ export default class Ship {
         this.#checkInvairant()
     }
 
+    // Purchase and install upgrade if distance allows
     installUpgrade(upgrade: Propulsion) {
         if (this.#deductDistanceTravelled(upgrade.cost)) {
             this.#installedUpgrades.push(upgrade)
@@ -193,6 +200,7 @@ export default class Ship {
         }
     }
 
+    // Recalculate total thrusts per second from active autopilots
     #updateThrustsPerSecond() {
         this.#thrustsPerSecond = 0
         this.#activeAutopilots.forEach((e) => {
@@ -201,6 +209,7 @@ export default class Ship {
         this.#checkInvairant()
     }
 
+    // Purchase and install autopilot if distance allows
     installAutopilot(autopilot: Autopilot) {
         if (this.#deductDistanceTravelled(autopilot.cost)) {
             this.#activeAutopilots.push(autopilot)
@@ -212,15 +221,18 @@ export default class Ship {
         }
     }
 
+    // Notify all registered listeners
     #notifyAll() {
         this.#listeners.forEach(e => {
             e.notify()
         })
     }
 
+    // Register a new listener
     registerListener(listner: Listener) {
         this.#listeners.push(listner)
     }
 }
 
+// Exception thrown when ship doesn't have enough distance for purchase
 export class InsufficientDistanceException extends Error { }

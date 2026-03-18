@@ -1,10 +1,6 @@
-/**
- * Renders the login/register screen and delegates form submission
- * to the LoginController via callback. No auth logic lives here.
- */
-
 type LoginSubmitCallback = (pilotName: string, password: string, isNewAccount: boolean) => void
 
+// Displays the login/register screen and passes form submissions to the LoginController
 export default class LoginView {
     #onSubmit: LoginSubmitCallback
     #errorEl!: HTMLElement
@@ -15,6 +11,7 @@ export default class LoginView {
         this.#render()
     }
 
+    // Build the login form DOM elements
     #render() {
         const app = document.querySelector<HTMLDivElement>('#app')!
         app.innerHTML = ''
@@ -47,6 +44,7 @@ export default class LoginView {
         ; (pilotField.querySelector('input') as HTMLInputElement).focus()
     }
 
+    // Helper to create an input field pair
     #createField(id: string, labelText: string, type: string, placeholder: string): HTMLElement {
         const wrapper = document.createElement('div')
 
@@ -63,17 +61,20 @@ export default class LoginView {
         return wrapper
     }
 
+    // Display an error message
     showError(message: string) {
         this.#errorEl.textContent = message
         this.#submitBtn.disabled = false
         this.#submitBtn.textContent = 'Launch'
     }
 
+    // Update button state to indicate loading
     setLoading() {
         this.#submitBtn.disabled = true
         this.#submitBtn.textContent = 'Launching...'
     }
 
+    // Remove the login view from the DOM
     destroy() {
         document.querySelector<HTMLDivElement>('#app')!.innerHTML = ''
     }

@@ -2,6 +2,7 @@ import type UpgradeController from "../controller/upgradeController"
 import type Propulsion from "../model/propulsion";
 import { InsufficientDistanceException } from "../model/ship";
 
+// Renders the list of available propulsion upgrades and handles purchase clicks
 export default class UpgradeView {
     #upgradeController: UpgradeController
     #upgradeEle: HTMLDivElement
@@ -15,6 +16,7 @@ export default class UpgradeView {
         })
     }
 
+    // Create and display a button for each upgrade
     #renderButtons(propulsions: Array<Propulsion>) {
         const app = document.querySelector("#app")!
 
@@ -34,6 +36,7 @@ export default class UpgradeView {
         app.appendChild(this.#upgradeEle)
     }
 
+    // Display a temporary error message
     #showErrorMessage(message: string) {
         const errorBox = document.createElement("div")
         errorBox.innerText = message
@@ -49,6 +52,7 @@ export default class UpgradeView {
         }, 3000)
     }
 
+    // Handle upgrade purchase attempt and display errors if any
     async #handleClick(name: string) {
         try {
             await this.#upgradeController.handleClick(name)

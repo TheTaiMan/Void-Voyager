@@ -3,6 +3,7 @@ import Propulsion from "../model/propulsion"
 import Ship from "../model/ship";
 import ShipView from "../view/shipView";
 
+// Manages the core game state, including thrusters and autonomous actions
 export default class ShipController {
     #ship!: Ship;
     #shipView!: ShipView;
@@ -16,6 +17,7 @@ export default class ShipController {
         this.#distanceTravelled = distanceTravelled;
     }
 
+    // Load ship data and start the game loop
     async initialize() {
 
         const [installedUpgrades, activeAutopilots] = await Promise.all([
@@ -34,18 +36,22 @@ export default class ShipController {
         this.#automationId = this.#engageAutopilots();
     }
 
+    // Fire thrusters to manually gain distance
     engageThrusters() {
         this.#ship.engageThrusters()
     }
 
+    // Install a new propulsion upgrade
     installUpgrade(upgrade: Propulsion) {
         this.#ship.installUpgrade(upgrade)
     }
 
+    // Install a new autopilot
     installAutopilot(autopilot: Autopilot) {
         this.#ship.installAutopilot(autopilot)
     }
 
+    // Start the interval for passive thrust generation
     #engageAutopilots() {
         return setInterval(() => {
             this.#ship.applyPassiveThrust();

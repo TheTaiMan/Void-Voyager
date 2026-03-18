@@ -4,6 +4,7 @@ export default function assert(val: any, message: string): asserts val {
     }
 }
 
+// Custom error class for assertion failures
 class AssertionError extends Error {
     constructor(message: string) {
         super(message);

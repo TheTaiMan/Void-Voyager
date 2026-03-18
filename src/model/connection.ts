@@ -13,6 +13,7 @@ if (src === 'memory://') {
     await pgliteDb.exec(ddl);
 }
 
+// Returns PGlite database connection instance
 export default function db() {
   return pgliteDb;
 }
