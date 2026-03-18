@@ -1,9 +1,9 @@
 import assert from "../util/assertions"
 import { hashPassword, verifyPassword } from "../util/passwordHash"
-import Autopilot from "./autopilot"
 import db from "./connection"
 
 import type Listener from "./listener"
+import Autopilot from "./autopilot"
 import Propulsion from "./propulsion"
 
 

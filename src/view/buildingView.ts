@@ -1,6 +1,6 @@
 import type BuildingController from "../controller/buildingController"
-import type Autopilot from "../model/autopilot";
-import { InsufficientDistanceException } from "../model/ship";
+import type Autopilot from "../model/autopilot"
+import { InsufficientDistanceException } from "../model/ship"
 
 // Renders the list of available autopilots and handles purchase clicks
 export default class BuildingView {

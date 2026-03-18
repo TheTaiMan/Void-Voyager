@@ -1,7 +1,7 @@
-import Autopilot from "../model/autopilot";
+import Autopilot from "../model/autopilot"
 import Propulsion from "../model/propulsion"
-import Ship from "../model/ship";
-import ShipView from "../view/shipView";
+import Ship from "../model/ship"
+import ShipView from "../view/shipView"
 
 // Manages the core game state, including thrusters and autonomous actions
 export default class ShipController {

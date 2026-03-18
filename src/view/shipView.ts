@@ -1,7 +1,7 @@
-import type Ship from "../model/ship";
-import type Listener from "../model/listener";
+import type Ship from "../model/ship"
+import type Listener from "../model/listener"
 
-import ShipController from "../controller/shipController";
+import ShipController from "../controller/shipController"
 
 // Creates ship UI elements and updates them when the model changes (Observer pattern)
 export default class ShipView implements Listener {

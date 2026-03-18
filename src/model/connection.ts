@@ -1,5 +1,5 @@
-import { PGlite } from '@electric-sql/pglite';
-import ddl from '../../create-table.sql?raw';
+import { PGlite } from '@electric-sql/pglite'
+import ddl from '../../create-table.sql?raw'
 
 let src = 'idb://2452-emon';
 if (import.meta.env && import.meta.env.MODE === 'test') {

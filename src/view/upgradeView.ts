@@ -1,6 +1,6 @@
 import type UpgradeController from "../controller/upgradeController"
-import type Propulsion from "../model/propulsion";
-import { InsufficientDistanceException } from "../model/ship";
+import type Propulsion from "../model/propulsion"
+import { InsufficientDistanceException } from "../model/ship"
 
 // Renders the list of available propulsion upgrades and handles purchase clicks
 export default class UpgradeView {

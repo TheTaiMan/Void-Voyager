@@ -1,6 +1,6 @@
-import Autopilot from "../model/autopilot";
+import Autopilot from "../model/autopilot"
 import BuildingView from "../view/buildingView"
-import ShipController from "./shipController";
+import ShipController from "./shipController"
 
 // Manages the logic for purchasing and installing autopilots
 export default class BuildingController {
