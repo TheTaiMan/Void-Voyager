@@ -10,7 +10,6 @@ console.log(`Using ${src} for database URL`);
 const pgliteDb = await PGlite.create(src);
 
 if (src === 'memory://') {
-    // we're going to load the DDL here, we're doing tests.
     await pgliteDb.exec(ddl);
 }
 

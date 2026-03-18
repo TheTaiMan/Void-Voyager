@@ -6,17 +6,18 @@ import Autopilot from "../src/model/autopilot"
 import db from "../src/model/connection"
 import ddl from '../create-table.sql?raw';
 
-import { vi } from 'vitest';
-
 beforeEach(async () => {
-    // Mock save to prevent unhandled background rejections
-    vi.spyOn(Propulsion, 'save').mockImplementation(async () => {});
-    vi.spyOn(Autopilot, 'save').mockImplementation(async () => {});
-    
     await db().exec(`
         TRUNCATE TABLE ship, propulsion, autopilot CASCADE;
     `);
     await db().exec(ddl);
+});
+
+// Wait a short time after tests to allow background Promise saves from Ship to finish
+// so they don't crash when the database is truncated in the next test
+import { afterEach } from 'vitest';
+afterEach(async () => {
+    await new Promise(resolve => setTimeout(resolve, 50));
 });
 
 test("Ship initializes with correct default values", () => {
