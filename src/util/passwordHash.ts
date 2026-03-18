@@ -1,25 +1,14 @@
-/**
- * Password hashing and verification using PBKDF2 via the Web Crypto API.
- * Stores salt and hash together as a single "salt:hash" hex string —
- * no extra DB column needed.
- * https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/deriveKey
- */
-
 const ITERATIONS = 100_000
-const KEY_LENGTH  = 256
+const KEY_LENGTH = 256
 
-async function deriveKey(password: string, salt: Uint8Array<ArrayBuffer>): Promise<ArrayBuffer> {
-    const keyMaterial = await crypto.subtle.importKey(
+function getKeyMaterial(password: string) {
+    const enc = new TextEncoder()
+    return window.crypto.subtle.importKey(
         "raw",
-        new TextEncoder().encode(password),
-        "PBKDF2",
+        enc.encode(password),
+        { name: "PBKDF2" },
         false,
         ["deriveBits"]
-    )
-    return crypto.subtle.deriveBits(
-        { name: "PBKDF2", salt, iterations: ITERATIONS, hash: "SHA-256" },
-        keyMaterial,
-        KEY_LENGTH
     )
 }
 
@@ -29,23 +18,30 @@ function toHex(buffer: ArrayBuffer): string {
         .join('')
 }
 
-/**
- * Hashes a plain-text password. Returns a "saltHex:hashHex" string
- * safe to store directly in the DB.
- */
 export async function hashPassword(password: string): Promise<string> {
-    const salt = crypto.getRandomValues(new Uint8Array(16))
-    const hash = await deriveKey(password, salt)
-    return `${toHex(salt.buffer)}:${toHex(hash)}`
+    const keyMaterial = await getKeyMaterial(password)
+    const salt = window.crypto.getRandomValues(new Uint8Array(16))
+
+    const derivedBits = await window.crypto.subtle.deriveBits(
+        { name: "PBKDF2", salt, iterations: ITERATIONS, hash: "SHA-256" },
+        keyMaterial,
+        KEY_LENGTH
+    )
+
+    return `${toHex(salt.buffer as ArrayBuffer)}:${toHex(derivedBits)}`
 }
 
-/**
- * Re-derives the hash using the salt embedded in `stored` and does a
- * constant-time string comparison. Returns true if the password matches.
- */
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
     const [saltHex, storedHashHex] = stored.split(':')
+
+    const keyMaterial = await getKeyMaterial(password)
     const salt = new Uint8Array(saltHex.match(/.{2}/g)!.map(b => parseInt(b, 16)))
-    const hash = await deriveKey(password, salt)
-    return toHex(hash) === storedHashHex
+
+    const derivedBits = await window.crypto.subtle.deriveBits(
+        { name: "PBKDF2", salt, iterations: ITERATIONS, hash: "SHA-256" },
+        keyMaterial,
+        KEY_LENGTH
+    )
+
+    return toHex(derivedBits) === storedHashHex
 }
