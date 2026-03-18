@@ -25,7 +25,7 @@ export default class LoginController {
             return
         }
 
-        this.#loginView.setLoading(true)
+        this.#loginView.setLoading()
 
         if (isNewAccount) {
             await this.#register(pilotName, password)
