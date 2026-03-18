@@ -1,6 +1,5 @@
 import { expect, test, beforeEach } from 'vitest';
 import Propulsion from '../src/model/propulsion';
-import Ship from '../src/model/ship';
 import db from '../src/model/connection';
 import ddl from '../create-table.sql?raw';
 

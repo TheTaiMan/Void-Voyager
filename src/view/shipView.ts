@@ -26,7 +26,7 @@ export default class ShipView implements Listener {
         const initialSpeed = this.#ship.thrustPower * this.#ship.thrustsPerSecond
 
         shipContainer.innerHTML =
-           `<h3>🚀 ${this.#ship.pilotName}</h3>
+           `<h3>Pilot: ${this.#ship.pilotName}</h3>
             <h1 id="distance">Distance: ${this.#ship.distanceTraveled}</h1>
             <p id="thrust">Per Thrust: ${this.#ship.thrustPower}</p>
             <p id="speed">Speed: ${initialSpeed}/s</p>

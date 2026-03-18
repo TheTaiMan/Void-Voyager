@@ -23,7 +23,7 @@ export default class BuildingView {
         this.#buildingEle.id = "buildings"
 
         const heading = document.createElement("h4")
-        heading.textContent = "🤖 Autopilots"
+        heading.textContent = "Autopilots"
         this.#buildingEle.appendChild(heading)
 
         autopilots.forEach(autopilot => {

@@ -23,7 +23,7 @@ export default class UpgradeView {
         this.#upgradeEle.id = "upgrades"
 
         const heading = document.createElement("h4")
-        heading.textContent = "⚡Propulsion Upgrades"
+        heading.textContent = "Propulsion Upgrades"
         this.#upgradeEle.appendChild(heading)
 
         propulsions.forEach((propulsion) => {

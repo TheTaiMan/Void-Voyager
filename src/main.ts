@@ -10,7 +10,7 @@ const startApp = () => {
 
 // Main entry point to initialize database and start the app
 const main = async () => {
-    db().exec(ddl)
+    await db().exec(ddl)
     startApp()
 }
 
