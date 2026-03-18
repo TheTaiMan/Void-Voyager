@@ -5,6 +5,9 @@ export default defineConfig({
         coverage: {
             provider: 'v8' // or 'istanbul'
         },
+        env: {
+            VITE_DATABASE_URL: "memory://"
+        },
     },
 })
 
