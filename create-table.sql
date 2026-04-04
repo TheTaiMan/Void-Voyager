@@ -63,3 +63,48 @@ INSERT INTO autopilot_inventory (name, passive_thrust, cost)
 INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
     VALUES ('AI Captain', 25, 1000) 
     ON CONFLICT (name) DO NOTHING;
+
+-- 10 new "purchasable" items:
+
+-- Propulsion Upgrades (Click modifiers)
+INSERT INTO propulsion_inventory (name, boost, cost)
+    VALUES ('Warp Core', 100, 1500)
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO propulsion_inventory (name, boost, cost)
+    VALUES ('Singularity Engine', 250, 4000)
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO propulsion_inventory (name, boost, cost)
+    VALUES ('Quantum Thruster', 500, 10000)
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO propulsion_inventory (name, boost, cost)
+    VALUES ('Tachyon Drive', 1000, 25000)
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO propulsion_inventory (name, boost, cost)
+    VALUES ('Dark Matter Propulsor', 2500, 60000)
+    ON CONFLICT (name) DO NOTHING;
+
+
+-- Autopilot Buildings (Passive distance generation)
+INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
+    VALUES ('Drone Swarm', 75, 3000) 
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
+    VALUES ('Automated Starport', 200, 8000) 
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
+    VALUES ('Cloning Facility', 500, 20000) 
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
+    VALUES ('Orbital Nexus', 1200, 50000) 
+    ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
+    VALUES ('Dyson Sphere Array', 3000, 120000) 
+    ON CONFLICT (name) DO NOTHING;
