@@ -5,7 +5,7 @@ date: Winter 2026
 ---
 
 # Overview
-Void Voyager is an implementation of Cookie Clicker (in both gameplay and alliteration) for COMP 2452 in Winter 2026. You are the captain of an experimental spacecraft sitting on the launchpad. Your goal is to travel as far from Earth as possible (Physics may not apply). With the new Phase 2 updates, you can now register a user account and switch between different pilot profiles to securely save your journey. 
+Void Voyager is an implementation of Cookie Clicker (in both gameplay and alliteration) for COMP 2452 in Winter 2026. You are the captain of an experimental spacecraft sitting on the launchpad. Your goal is to travel as far from Earth as possible (Physics may not apply). With the new Phase 3 updates, get ready for an explosion of brand new upgrades. 
 
 ### Gameplay Loop
 * Engage Thrusters: Every interaction (click) propels your ship forward, increasing your Distance Traveled (measured in Light Years).
@@ -39,3 +39,4 @@ Void Voyager is an implementation of Cookie Clicker (in both gameplay and allite
 # Domain model and flow diagrams
 * You can find my domain model in `domain.md`.
 * You can find my flow diagrams in `flows.md`.
+* You can find my ui assessment in `ui-assessment.md`.
