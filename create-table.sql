@@ -66,7 +66,7 @@ INSERT INTO autopilot_inventory (name, passive_thrust, cost)
 
 -- 10 new "purchasable" items:
 
--- Propulsion Upgrades (Click modifiers)
+-- Propulsion Upgrades
 INSERT INTO propulsion_inventory (name, boost, cost)
     VALUES ('Warp Core', 100, 1500)
     ON CONFLICT (name) DO NOTHING;
@@ -88,7 +88,7 @@ INSERT INTO propulsion_inventory (name, boost, cost)
     ON CONFLICT (name) DO NOTHING;
 
 
--- Autopilot Buildings (Passive distance generation)
+-- Autopilot Buildings
 INSERT INTO autopilot_inventory (name, passive_thrust, cost) 
     VALUES ('Drone Swarm', 75, 3000) 
     ON CONFLICT (name) DO NOTHING;
