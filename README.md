@@ -16,7 +16,7 @@ Void Voyager is an implementation of Cookie Clicker (in both gameplay and allite
 
 # Running
 1.  Install dependencies:
-    ``bash
+    ```bash
     npm install
     ```
 
