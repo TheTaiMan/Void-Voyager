@@ -26,7 +26,6 @@ export default class AI {
     #nextState!: Propulsion | Autopilot
 
     #allUpgrades: Map<Slot, Propulsion | Autopilot>
-    // Changed to Array<Array<number>> because it holds transition counts
     #data: Array<Array<number>>
     #listeners: Array<Listener>
 
@@ -97,7 +96,6 @@ export default class AI {
     }
 
     get nextState(): Propulsion | Autopilot {
-        // Fixed: return the private field to prevent infinite recursion
         return this.#nextState
     }
 
@@ -119,7 +117,7 @@ export default class AI {
     calculateNextState() {
         if (!this.#currentState || this.#data.length === 0) return;
 
-        // 1. Find the Slot index of the current state
+        // Find the Slot index of the current state
         let currentIndex = -1;
         for (const [key, value] of this.#allUpgrades.entries()) {
             if (value.name === this.#currentState.name) {
@@ -130,10 +128,10 @@ export default class AI {
 
         if (currentIndex === -1) return;
 
-        // 2. Get the row of transitions for this state
+        // Get the row of transitions for this state
         const transitions = this.#data[currentIndex];
 
-        // 3. Calculate the denominator (sum of all outgoing transitions)
+        // Calculate the denominator (sum of all outgoing transitions)
         let denominator = 0;
         for (const count of transitions) {
             denominator += count;
@@ -141,10 +139,10 @@ export default class AI {
 
         if (denominator === 0) return;
 
-        // 4. Generate a random number between 1 and the denominator inclusive
+        // Generate a random number between 1 and the denominator inclusive
         const randomNum = Math.floor(Math.random() * denominator) + 1;
 
-        // 5. Keep a running sum to find the next state
+        // Keep a running sum to find the next state
         let runningSum = 0;
         for (let nextIndex = 0; nextIndex < transitions.length; nextIndex++) {
             runningSum += transitions[nextIndex];
